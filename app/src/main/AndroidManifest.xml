@@ -23,6 +23,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".AddTripActivity"
+            android:label="New Trip"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+        </activity>
+
     </application>
 
 </manifest>

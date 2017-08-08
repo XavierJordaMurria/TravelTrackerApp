@@ -1,5 +1,6 @@
 package cat.jorda.traveltrack;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -8,6 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,8 +23,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                onFabClick(view);
             }
         });
     }
@@ -42,9 +44,19 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(this, SignInActivity.class));
+            finish();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void onFabClick(View view)
+    {
+        startActivity(new Intent(this, AddTripActivity.class));
+        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
     }
 }

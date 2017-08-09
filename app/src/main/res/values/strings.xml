@@ -16,4 +16,16 @@
     <string name="heading_recent">Recent</string>
     <string name="heading_my_posts">My Posts</string>
     <string name="heading_my_top_posts">My Top Posts</string>
+
+    <!--Add trip Layout-->
+    <string name="trip_name">Trip Name:</string>
+    <string name="name">Name</string>
+    <string name="starting_date">Starting Date:</string>
+    <string name="_01_02_2018">01/02/2018</string>
+    <string name="ending_date">Ending Date:</string>
+    <string name="_20_02_2018">20/02/2018</string>
+    <string name="country">Country:</string>
+    <string name="short_description">Short Description:</string>
+    <string name="tell_me_something_about_this_trip">Tell me something about this trip.</string>
+    <string name="save">save_trip</string>
 </resources>

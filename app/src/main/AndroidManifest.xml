@@ -27,7 +27,7 @@
         <activity
             android:name=".AddTripActivity"
             android:label="New Trip"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            android:theme="@style/Theme.Transparent">
         </activity>
 
     </application>

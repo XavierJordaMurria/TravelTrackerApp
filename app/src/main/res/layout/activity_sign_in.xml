@@ -63,7 +63,6 @@
             android:textColor="@color/colorPrimary"
             style="?android:attr/buttonBarStyle"/>
 
-
         <Button
             android:id="@+id/button_sign_up"
             android:layout_width="150dp"
@@ -73,6 +72,5 @@
             style="?android:attr/buttonBarStyle"/>
 
     </LinearLayout>
-
 
 </RelativeLayout>

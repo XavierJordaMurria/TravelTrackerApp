@@ -71,18 +71,15 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         String password = mPasswordField.getText().toString();
 
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
-                        hideProgressDialog();
+                .addOnCompleteListener(this, task -> {
+                    Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
+                    hideProgressDialog();
 
-                        if (task.isSuccessful()) {
-                            onAuthSuccess(task.getResult().getUser());
-                        } else {
-                            Toast.makeText(SignInActivity.this, "Sign In Failed",
-                                    Toast.LENGTH_SHORT).show();
-                        }
+                    if (task.isSuccessful()) {
+                        onAuthSuccess(task.getResult().getUser());
+                    } else {
+                        Toast.makeText(SignInActivity.this, "Sign In Failed",
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -98,18 +95,15 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         String password = mPasswordField.getText().toString();
 
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
-                        hideProgressDialog();
+                .addOnCompleteListener(this, task -> {
+                    Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
+                    hideProgressDialog();
 
-                        if (task.isSuccessful()) {
-                            onAuthSuccess(task.getResult().getUser());
-                        } else {
-                            Toast.makeText(SignInActivity.this, "Sign Up Failed",
-                                    Toast.LENGTH_SHORT).show();
-                        }
+                    if (task.isSuccessful()) {
+                        onAuthSuccess(task.getResult().getUser());
+                    } else {
+                        Toast.makeText(SignInActivity.this, "Sign Up Failed",
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }

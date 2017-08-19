@@ -24,8 +24,8 @@ public class TripViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindToTrip(TripInfo trip, View.OnClickListener starClickListener) {
-        titleTextView_.setText(trip.getTitle_());
-        titleTextView_.setText(trip.getSubTitle_());
+        titleTextView_.setText(trip.title_);
+        subTitleTextView_.setText(trip.subTitle_);
 //        starView.setOnClickListener(starClickListener);
     }
 }

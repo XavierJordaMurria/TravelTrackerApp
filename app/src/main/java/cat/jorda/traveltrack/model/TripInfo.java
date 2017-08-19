@@ -1,6 +1,11 @@
 package cat.jorda.traveltrack.model;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.google.firebase.database.PropertyName;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by xj1 on 07/08/2017.
@@ -10,90 +15,55 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class TripInfo
 {
+    @PropertyName("uid")
+    public String uid_;
+    @PropertyName("traveler")
+    public String traveler_;
+    @PropertyName("title")
+    public String title_;
+    @PropertyName("subTitle")
+    public String subTitle_;
+    @PropertyName("startDate")
+    public String startDate_;
+    @PropertyName("endDate")
+    public String endDate_;
+    @PropertyName("country")
+    public String country_;
 
-   private String title_;
-   private String subTitle_;
-   private String startDate_;
-   private String endDate_;
-   private String country_;
-
-    private float budget_;
-    private String description_;
+    public float budget_;
+    public String description_;
 
     public TripInfo() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public TripInfo(String title, String subTitle, String startDate, String endDate, String country)
+    public TripInfo(String uid, String traveler,
+                    String title, String subTitle,
+                    String startDate, String endDate, String country)
     {
-        title_ = title;
+        uid_    = uid;
+        traveler_   = traveler;
+        title_  = title;
         subTitle_   = subTitle;
-        startDate_ = startDate;
+        startDate_  = startDate;
         endDate_    = endDate;
         country_    = country;
     }
 
-    public void setBudget(float budget)
-    {
-        if(budget < 0)
-            throw new IllegalArgumentException("Budget can not be negative");
+    // [START post_to_map]
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("uid", uid_);
+        result.put("title", title_);
+        result.put("subTitle", subTitle_);
+        result.put("starDate", startDate_);
+        result.put("endDate", endDate_);
+        result.put("country", country_);
+        result.put("traveler", traveler_);
 
-        budget_ =   budget;
+        return result;
     }
-
-    public float getbudget()
-    {
-        return budget_;
-    }
-
-    public void setDescription(String description)
-    {
-        description_ = description;
-    }
-
-    public String getDescription()
-    {
-        return description_;
-    }
-
-    public String getTitle_() {
-        return title_;
-    }
-
-    public String getSubTitle_() {
-        return subTitle_;
-    }
-
-    public String getStartDate_() {
-        return startDate_;
-    }
-
-    public String getEndDate_() {
-        return endDate_;
-    }
-
-    public String getCountry_() {
-        return country_;
-    }
-
-    public void setTitle_(String title_) {
-        this.title_ = title_;
-    }
-
-    public void setSubTitle_(String subTitle_) {
-        this.subTitle_ = subTitle_;
-    }
-
-    public void setStartDate_(String startDate_) {
-        this.startDate_ = startDate_;
-    }
-
-    public void setEndDate_(String endDate_) {
-        this.endDate_ = endDate_;
-    }
-
-    public void setCountry_(String country_) {
-        this.country_ = country_;
-    }
+    // [END post_to_map]
 }
 // [END blog_user_class]

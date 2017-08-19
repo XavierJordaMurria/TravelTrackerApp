@@ -5,33 +5,64 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import cat.jorda.traveltrack.model.TripInfo;
+import cat.jorda.traveltrack.model.User;
 
 /**
  * Created by xj1 on 08/08/2017.
  */
 
-public class AddTripActivity extends Activity implements View.OnTouchListener{
+public class AddTripActivity extends BaseActivity implements View.OnTouchListener
+{
+    private static String TAG = AddTripActivity.class.getSimpleName();
+    private String REQUIRED = "REQUIRED";
+    private RelativeLayout baseLayout_;
 
-    private RelativeLayout baseLayout;
+    private int previousFingerPosition_ = 0;
+    private int baseLayoutPosition_ = 0;
+    private int defaultViewHeight_;
 
-    private int previousFingerPosition = 0;
-    private int baseLayoutPosition = 0;
-    private int defaultViewHeight;
+    private boolean isClosing_ = false;
+    private boolean isScrollingUp_ = false;
+    private boolean isScrollingDown_ = false;
 
-    private boolean isClosing = false;
-    private boolean isScrollingUp = false;
-    private boolean isScrollingDown = false;
+    // [START declare_database_ref]
+    private DatabaseReference database_;
+    // [END declare_database_ref]
+
+    private AddTripViewHolder viewHolder_;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        // [START initialize_database_ref]
+        database_ = FirebaseDatabase.getInstance().getReference();
+        // [END initialize_database_ref]
+
         setContentView(R.layout.add_trip);
-        baseLayout = (RelativeLayout) findViewById(R.id.base_popup_layout);
-        baseLayout.setOnTouchListener(this);
+        baseLayout_ = (RelativeLayout) findViewById(R.id.base_popup_layout);
+        viewHolder_ = new AddTripViewHolder(baseLayout_);
+        baseLayout_.setOnTouchListener(this);
+
+        viewHolder_.saveTrip_.setOnClickListener(v->saveTrip());
     }
 
     public boolean onTouch(View view, MotionEvent event) {
@@ -44,91 +75,187 @@ public class AddTripActivity extends Activity implements View.OnTouchListener{
 
             case MotionEvent.ACTION_DOWN:
                 // save default base layout height
-                defaultViewHeight = baseLayout.getHeight();
+                defaultViewHeight_ = baseLayout_.getHeight();
 
                 // Init finger and view position
-                previousFingerPosition = Y;
-                baseLayoutPosition = (int) baseLayout.getY();
+                previousFingerPosition_ = Y;
+                baseLayoutPosition_ = (int) baseLayout_.getY();
                 break;
 
             case MotionEvent.ACTION_UP:
                 // If user was doing a scroll up
-                if(isScrollingUp){
+                if(isScrollingUp_)
+                {
                     // Reset baselayout position
-                    baseLayout.setY(0);
+                    baseLayout_.setY(0);
                     // We are not in scrolling up mode anymore
-                    isScrollingUp = false;
+                    isScrollingUp_ = false;
                 }
 
                 // If user was doing a scroll down
-                if(isScrollingDown){
+                if(isScrollingDown_){
                     // Reset baselayout position
-                    baseLayout.setY(0);
+                    baseLayout_.setY(0);
                     // Reset base layout size
-                    baseLayout.getLayoutParams().height = defaultViewHeight;
-                    baseLayout.requestLayout();
+                    baseLayout_.getLayoutParams().height = defaultViewHeight_;
+                    baseLayout_.requestLayout();
                     // We are not in scrolling down mode anymore
-                    isScrollingDown = false;
+                    isScrollingDown_ = false;
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
 
-                if(!isClosing){
-                    int currentYPosition = (int) baseLayout.getY();
+                if(!isClosing_){
+                    int currentYPosition = (int) baseLayout_.getY();
 
                     // If we scroll up
-                    if(previousFingerPosition >Y){
+                    if(previousFingerPosition_ >Y){
                         // First time android rise an event for "up" move
-                        if(!isScrollingUp){
-                            isScrollingUp = true;
+                        if(!isScrollingUp_){
+                            isScrollingUp_ = true;
                         }
 
                         // Has user scroll down before -> view is smaller than it's default size -> resize it instead of change it position
-                        if(baseLayout.getHeight()<defaultViewHeight){
-                            baseLayout.getLayoutParams().height = baseLayout.getHeight() - (Y - previousFingerPosition);
-                            baseLayout.requestLayout();
+                        if(baseLayout_.getHeight()<defaultViewHeight_){
+                            baseLayout_.getLayoutParams().height = baseLayout_.getHeight() - (Y - previousFingerPosition_);
+                            baseLayout_.requestLayout();
                         }
                         else {
                             // Has user scroll enough to "auto close" popup ?
-                            if ((baseLayoutPosition - currentYPosition) > defaultViewHeight / 4) {
+                            if ((baseLayoutPosition_ - currentYPosition) > defaultViewHeight_ / 4) {
                                 closeUpAndDismissDialog(currentYPosition);
                                 return true;
                             }
                         }
 
-                        baseLayout.setY(baseLayout.getY() + (Y - previousFingerPosition));
+                        baseLayout_.setY(baseLayout_.getY() + (Y - previousFingerPosition_));
                     }
                     // If we scroll down
                     else{
                         // First time android rise an event for "down" move
-                        if(!isScrollingDown){
-                            isScrollingDown = true;
+                        if(!isScrollingDown_){
+                            isScrollingDown_ = true;
                         }
 
                         // Has user scroll enough to "auto close" popup ?
-                        if (Math.abs(baseLayoutPosition - currentYPosition) > defaultViewHeight / 2)
+                        if (Math.abs(baseLayoutPosition_ - currentYPosition) > defaultViewHeight_ / 2)
                         {
                             closeDownAndDismissDialog(currentYPosition);
                             return true;
                         }
 
                         // Change base layout size and position (must change position because view anchor is top left corner)
-                        baseLayout.setY(baseLayout.getY() + (Y - previousFingerPosition));
-                        baseLayout.getLayoutParams().height = baseLayout.getHeight() - (Y - previousFingerPosition);
-                        baseLayout.requestLayout();
+                        baseLayout_.setY(baseLayout_.getY() + (Y - previousFingerPosition_));
+                        baseLayout_.getLayoutParams().height = baseLayout_.getHeight() - (Y - previousFingerPosition_);
+                        baseLayout_.requestLayout();
                     }
 
                     // Update position
-                    previousFingerPosition = Y;
+                    previousFingerPosition_ = Y;
                 }
                 break;
         }
         return true;
     }
 
-    public void closeUpAndDismissDialog(int currentPosition){
-        isClosing = true;
-        ObjectAnimator positionAnimator = ObjectAnimator.ofFloat(baseLayout, "y", currentPosition, -baseLayout.getHeight());
+    private void saveTrip()
+    {
+        final String title  = viewHolder_.title_.getText().toString();
+        final String startingDate   = viewHolder_.startingDate_.getText().toString();
+        final String endingDate = viewHolder_.endingDate_.getText().toString();
+        final String country    = viewHolder_.country_.getText().toString();
+        final String shortDescription   = viewHolder_.shortDescription_.getText().toString();
+
+        // Title is required
+        if (TextUtils.isEmpty(title)) {
+            viewHolder_.title_.setError(REQUIRED);
+            return;
+        }
+
+        // startingDate_ is required
+        if (TextUtils.isEmpty(startingDate)) {
+            viewHolder_.startingDate_.setError(REQUIRED);
+            return;
+        }
+
+        // endingDate_ is required
+        if (TextUtils.isEmpty(endingDate)) {
+            viewHolder_.endingDate_.setError(REQUIRED);
+            return;
+        }
+
+        // country is required
+        if (TextUtils.isEmpty(country)) {
+            viewHolder_.country_.setError(REQUIRED);
+            return;
+        }
+
+        // Disable button so there are no multi-posts
+        viewHolder_.saveTrip_.setEnabled(false);
+        Toast.makeText(this, "Posting Trip...", Toast.LENGTH_SHORT).show();
+
+        // [START single_value_read]
+        final String userId = getUid();
+        database_.child("users").child(userId).addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Get user value
+                        User user = dataSnapshot.getValue(User.class);
+
+                        // [START_EXCLUDE]
+                        if (user == null) {
+                            // User is null, error out
+                            Log.e(TAG, "User " + userId + " is unexpectedly null");
+                            Toast.makeText(AddTripActivity.this,
+                                    "Error: could not fetch user.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Write new post
+                            writeNewTrip(userId, user.username,
+                                    title, startingDate,
+                                    endingDate, country, shortDescription);
+                        }
+
+                        // Finish this Activity, back to the stream
+                        viewHolder_.saveTrip_.setEnabled(true);
+                        finish();
+                        // [END_EXCLUDE]
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                        // [START_EXCLUDE]
+                        viewHolder_.saveTrip_.setEnabled(true);
+                        // [END_EXCLUDE]
+                    }
+                });
+        // [END single_value_read]
+    }
+
+    // [START write_fan_out]
+    private void writeNewTrip(String userId, String username,
+                              String title, String startingDate,
+                              String endingDate, String country, String shortDescripton)
+    {
+        // Create new trip at /user-trips/$userid/$tripid and at
+        // /trips/$tripid simultaneously
+        String key = database_.child("trips").push().getKey();
+        TripInfo tripInfo = new TripInfo(userId, username, title, shortDescripton, startingDate, endingDate, country);
+        Map<String, Object> postValues = tripInfo.toMap();
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/trips/" + key, postValues);
+        childUpdates.put("/user-trips/" + userId + "/" + key, postValues);
+
+        database_.updateChildren(childUpdates);
+    }
+    // [END write_fan_out]
+
+    private void closeUpAndDismissDialog(int currentPosition){
+        isClosing_ = true;
+        ObjectAnimator positionAnimator = ObjectAnimator.ofFloat(baseLayout_, "y", currentPosition, -baseLayout_.getHeight());
         positionAnimator.setDuration(300);
         positionAnimator.addListener(new Animator.AnimatorListener()
         {
@@ -151,13 +278,13 @@ public class AddTripActivity extends Activity implements View.OnTouchListener{
         positionAnimator.start();
     }
 
-    public void closeDownAndDismissDialog(int currentPosition){
-        isClosing = true;
+    private void closeDownAndDismissDialog(int currentPosition){
+        isClosing_ = true;
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int screenHeight = size.y;
-        ObjectAnimator positionAnimator = ObjectAnimator.ofFloat(baseLayout, "y", currentPosition, screenHeight+baseLayout.getHeight());
+        ObjectAnimator positionAnimator = ObjectAnimator.ofFloat(baseLayout_, "y", currentPosition, screenHeight + baseLayout_.getHeight());
         positionAnimator.setDuration(300);
         positionAnimator.addListener(new Animator.AnimatorListener()
         {

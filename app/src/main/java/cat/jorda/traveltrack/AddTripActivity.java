@@ -19,9 +19,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import cat.jorda.traveltrack.model.DayInfo;
 import cat.jorda.traveltrack.model.TripInfo;
 import cat.jorda.traveltrack.model.User;
 
@@ -48,6 +53,20 @@ public class AddTripActivity extends BaseActivity implements View.OnTouchListene
     // [END declare_database_ref]
 
     private AddTripViewHolder viewHolder_;
+
+    private class YearMonthDay
+    {
+        int year_;
+        int month_;
+        int day_;
+
+        YearMonthDay(String date)
+        {
+            year_   = Integer.parseInt(date.split("/")[2]);
+            month_  = Integer.parseInt(date.split("/")[1]);
+            day_    = Integer.parseInt(date.split("/")[0]);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -241,15 +260,33 @@ public class AddTripActivity extends BaseActivity implements View.OnTouchListene
     {
         // Create new trip at /user-trips/$userid/$tripid and at
         // /trips/$tripid simultaneously
-        String key = database_.child("trips").push().getKey();
+        String tripKey = database_.child("trips").push().getKey();
         TripInfo tripInfo = new TripInfo(userId, username, title, shortDescripton, startingDate, endingDate, country);
         Map<String, Object> postValues = tripInfo.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/trips/" + key, postValues);
-        childUpdates.put("/user-trips/" + userId + "/" + key, postValues);
-
+        childUpdates.put("/trips/" + tripKey, postValues);
+        childUpdates.put("/user-trips/" + userId + "/" + tripKey, postValues);
         database_.updateChildren(childUpdates);
+
+        writeDays4Trip(userId, tripKey, tripInfo);
+    }
+
+    private void writeDays4Trip(String userId, String tripKey, TripInfo tripInfo)
+    {
+        long numberDays = dateDiff(new YearMonthDay(tripInfo.startDate_), new YearMonthDay(tripInfo.endDate_));
+
+        for (int i = 0; i <= numberDays; i++)
+        {
+            String dayKey = database_.child("days").push().getKey();
+            DayInfo dayInfo = new DayInfo(userId, tripKey, "Day "+i, "", plusDate(tripInfo.startDate_,i));
+            Map<String, Object> postValues = dayInfo.toMap();
+
+            Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put("/days/" + dayKey, postValues);
+            childUpdates.put("/trips-days/" + tripKey + "/" + dayKey, postValues);
+            database_.updateChildren(childUpdates);
+        }
     }
     // [END write_fan_out]
 
@@ -304,6 +341,37 @@ public class AddTripActivity extends BaseActivity implements View.OnTouchListene
             }
         });
         positionAnimator.start();
+    }
+
+    /**
+     * DateDiff -- compute the difference between two dates.
+     */
+    public long dateDiff(YearMonthDay startDate, YearMonthDay endDate) {
+        Date d1 = new GregorianCalendar(startDate.year_, startDate.month_ -1, startDate.day_, 23, 59).getTime();
+        Date d2 = new GregorianCalendar(endDate.year_, endDate.month_-1, endDate.day_, 23, 59).getTime();
+
+        // Get msec from each, and subtract.
+        long diff = d2.getTime() - d1.getTime();
+
+        long daysDiff = (diff / (1000 * 60 * 60 * 24));
+        Log.d(TAG,"The 21st century (up to " + d2 + ") is " + daysDiff + " days old.");
+
+        return daysDiff;
+    }
+
+    public String plusDate(String startDate, int numDays2Add)
+    {
+        YearMonthDay yearMonthDay = new YearMonthDay(startDate);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date d1 = new GregorianCalendar(yearMonthDay.year_, yearMonthDay.month_-1, yearMonthDay.day_, 23, 59).getTime();
+        Calendar c = Calendar.getInstance();
+        c.setTime(d1); // Now use today date.
+        c.add(Calendar.DATE, numDays2Add); // Adding 5 days
+        String output = sdf.format(c.getTime());
+
+        Log.d(TAG,"plusDate = " + output);
+
+        return output;
     }
 }
 

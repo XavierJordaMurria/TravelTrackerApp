@@ -22,9 +22,11 @@ import com.google.firebase.database.Transaction;
 
 import cat.jorda.traveltrack.model.TripInfo;
 
-public abstract class BaseListFragment extends Fragment {
+public class DayListFragment extends Fragment {
 
-    private static final String TAG = "BaseListFragment";
+    private static final String TAG = DayListFragment.class.getSimpleName();
+
+    private String tripID_;
 
     // [START define_database_reference]
     private DatabaseReference database_;
@@ -34,7 +36,7 @@ public abstract class BaseListFragment extends Fragment {
     private RecyclerView recycler_;
     private LinearLayoutManager manager_;
 
-    public BaseListFragment() {}
+    public DayListFragment() {}
 
     @Override
     public View onCreateView (LayoutInflater inflater, ViewGroup container,
@@ -115,8 +117,8 @@ public abstract class BaseListFragment extends Fragment {
 
     public Query getQuery(DatabaseReference databaseReference) {
         // All my posts
-        return databaseReference.child("user-posts")
-                .child(getUid());
+        return databaseReference.child("trips-days")
+                .child(tripID_);
     }
 
 }

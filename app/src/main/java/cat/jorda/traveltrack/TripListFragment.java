@@ -1,5 +1,6 @@
 package cat.jorda.traveltrack;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -30,9 +31,19 @@ public class TripListFragment extends Fragment {
     private DatabaseReference database_;
     // [END define_database_reference]
 
+    private ItemSelectedListener listener_;
+
     private FirebaseRecyclerAdapter<TripInfo, TripViewHolder> adapter_;
     private RecyclerView recycler_;
     private LinearLayoutManager manager_;
+
+
+    // Define the events that the fragment will use to communicate
+    public interface ItemSelectedListener
+    {
+        // This can be any number of events to be sent to the activity
+        void onTripSelected(String tripSelectedKey);
+    }
 
     public TripListFragment() {}
 
@@ -73,18 +84,9 @@ public class TripListFragment extends Fragment {
                 // Set click listener for the whole post view
                 final String tripKey = tripRef.getKey();
                 viewHolder.itemView.setOnClickListener(v -> {
-                    // Launch PostDetailActivity
-//                        Intent intent = new Intent(getActivity(), PostDetailActivity.class);
-//                        intent.putExtra(PostDetailActivity.EXTRA_POST_KEY, postKey);
-//                        startActivity(intent);
+                    // Load Days for the trip.
+                    listener_.onTripSelected(tripKey);
                 });
-
-                // Determine if the current user has liked this post and set UI accordingly
-//                if (model.stars.containsKey(getUid())) {
-//                    viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_24);
-//                } else {
-//                    viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_outline_24);
-//                }
 
                 // Bind Post to ViewHolder, setting OnClickListener for the star button
                 viewHolder.bindToTrip(model, starView -> {
@@ -99,6 +101,17 @@ public class TripListFragment extends Fragment {
             }
         };
         recycler_.setAdapter(adapter_);
+    }
+    @Override
+    public void onAttach(Context context)
+    {
+        super.onAttach(context);
+
+        if(context instanceof ItemSelectedListener)  // context instanceof YourActivity
+            this.listener_ = (ItemSelectedListener) context; // = (YourActivity) context
+        else
+            throw new ClassCastException(context.toString()
+                    + " must implement StepsFragment.OnItemSelectedListener");
     }
 
     @Override

@@ -1,6 +1,8 @@
 package cat.jorda.traveltrack;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,10 +13,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends BaseActivity {
+import cat.jorda.traveltrack.util.Constants;
+
+public class MainActivity extends BaseActivity implements  TripListFragment.ItemSelectedListener, DayListFragment.ItemSelectedListener{
 
     private enum loadFrgType_ {ADD_FRG, REPLACE_FRG};
 
@@ -52,6 +57,28 @@ public class MainActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onTripSelected(String tripSelectedKey) {
+
+        DayListFragment dayListFrag = new DayListFragment();
+        Bundle args = new Bundle();
+        args.putString(Constants.TRIP_KEY, tripSelectedKey);
+
+//        FrameLayout details = (FrameLayout) findViewById(R.id.recipe_step_fragment_details);
+
+//        if (details == null) {
+                loadFragment(dayListFrag, loadFrgType_.REPLACE_FRG, R.id.recipe_steps_fragment_container, args);
+//        } else {
+//                loadFragment(dayListFrag, loadFrgType_.REPLACE_FRG, R.id.recipe_step_fragment_details, args);
+//        }
+
+    }
+
+    @Override
+    public void onDaySelected(String tripSelectedKey) {
+
     }
 
     private void onFabClick(View view)

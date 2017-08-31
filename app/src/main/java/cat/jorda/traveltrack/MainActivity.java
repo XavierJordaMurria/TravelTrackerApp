@@ -17,19 +17,23 @@ import android.widget.FrameLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import cat.jorda.traveltrack.dayDetails.DayDetailsActivity;
 import cat.jorda.traveltrack.util.Constants;
+
+import static cat.jorda.traveltrack.util.Constants.TRIP_KEY;
 
 public class MainActivity extends BaseActivity implements  TripListFragment.ItemSelectedListener, DayListFragment.ItemSelectedListener{
 
     private enum loadFrgType_ {ADD_FRG, REPLACE_FRG};
+    private FloatingActionButton fab_;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_new_trip);
-        fab.setOnClickListener(view -> onFabClick(view));
+        fab_ = (FloatingActionButton) findViewById(R.id.fab_new_trip);
+        fab_.setOnClickListener(view -> onFabClick(view));
 
         loadFragment(new TripListFragment(), loadFrgType_.REPLACE_FRG, R.id.recipe_steps_fragment_container, null);
     }
@@ -55,6 +59,9 @@ public class MainActivity extends BaseActivity implements  TripListFragment.Item
             finish();
             return true;
         }
+        else if (item.getItemId() == android.R.id.home) {
+            loadFragment(new TripListFragment(), loadFrgType_.REPLACE_FRG, R.id.recipe_steps_fragment_container, null);
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -64,7 +71,7 @@ public class MainActivity extends BaseActivity implements  TripListFragment.Item
 
         DayListFragment dayListFrag = new DayListFragment();
         Bundle args = new Bundle();
-        args.putString(Constants.TRIP_KEY, tripSelectedKey);
+        args.putString(TRIP_KEY, tripSelectedKey);
 
 //        FrameLayout details = (FrameLayout) findViewById(R.id.recipe_step_fragment_details);
 
@@ -73,12 +80,16 @@ public class MainActivity extends BaseActivity implements  TripListFragment.Item
 //        } else {
 //                loadFragment(dayListFrag, loadFrgType_.REPLACE_FRG, R.id.recipe_step_fragment_details, args);
 //        }
+        fab_.setVisibility(View.GONE);
 
     }
 
     @Override
-    public void onDaySelected(String tripSelectedKey) {
-
+    public void onDaySelected(String daySelectedKey)
+    {
+        Intent intent = new Intent(this, DayDetailsActivity.class);
+        intent.putExtra(Constants.DAY_KEY, daySelectedKey);
+        startActivity(intent);
     }
 
     private void onFabClick(View view)

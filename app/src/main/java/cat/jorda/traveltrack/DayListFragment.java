@@ -5,6 +5,8 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,7 +42,7 @@ public class DayListFragment extends Fragment {
     public interface ItemSelectedListener
     {
         // This can be any number of events to be sent to the activity
-        void onDaySelected(String tripSelectedKey);
+        void onDaySelected(String daySelectedKey);
     }
 
     public DayListFragment() {}
@@ -50,6 +52,11 @@ public class DayListFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         Log.d(TAG, "onCreate");
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Trips list");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         // Get back arguments
         if (getArguments() == null)
             return;
@@ -160,8 +167,7 @@ public class DayListFragment extends Fragment {
                 cardsNumber = 3;
                 break;
             case Configuration.SCREENLAYOUT_SIZE_NORMAL:
-            case Configuration.SCREENLAYOUT_SIZE_SMALL:
-                cardsNumber = 1;
+                cardsNumber = 2;
                 break;
             default:
                 cardsNumber = 1;

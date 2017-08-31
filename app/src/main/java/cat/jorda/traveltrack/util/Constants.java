@@ -6,4 +6,5 @@ package cat.jorda.traveltrack.util;
 
 public class Constants {
     public static String TRIP_KEY = "TRIP_KEY";
+    public static String DAY_KEY = "DAY_KEY";
 }

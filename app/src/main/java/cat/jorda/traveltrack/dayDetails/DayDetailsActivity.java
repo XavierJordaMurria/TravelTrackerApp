@@ -12,6 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import cat.jorda.traveltrack.BaseActivity;
 import cat.jorda.traveltrack.R;
@@ -28,8 +30,13 @@ public class  DayDetailsActivity extends BaseActivity {
     private FragmentPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
 
+    // [START declare_database_ref]
+    private DatabaseReference database_;
+    // [END declare_database_ref]
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.day_details_activity);
 
@@ -38,7 +45,8 @@ public class  DayDetailsActivity extends BaseActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         // Create the adapter that will return a fragment for each section
-        mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+        mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager())
+        {
             private final Fragment[] mFragments = new Fragment[] {
                     new MapDayFragment(),
                     new FinancesDayFragment(),
@@ -62,6 +70,7 @@ public class  DayDetailsActivity extends BaseActivity {
                 return mFragmentNames[position];
             }
         };
+
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.day_container);
         mViewPager.setAdapter(mPagerAdapter);
@@ -72,6 +81,10 @@ public class  DayDetailsActivity extends BaseActivity {
         findViewById(R.id.fab_day_details).setOnClickListener(v -> {
 //                startActivity(new Intent(DayDetailsActivity.this, NewPostActivity.class));
         });
+
+        // [START initialize_database_ref]
+        database_ = FirebaseDatabase.getInstance().getReference();
+        // [END initialize_database_ref]
     }
 
     @Override

@@ -12,9 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.*;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -29,24 +27,33 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import cat.jorda.traveltrack.AddTripActivity;
 import cat.jorda.traveltrack.R;
+import cat.jorda.traveltrack.model.CustomMarker;
+import cat.jorda.traveltrack.model.DayInfo;
+import cat.jorda.traveltrack.model.TripInfo;
 
 /**
  * Created by xj1 on 22/08/2017.
  */
 
-public class MapDayFragment extends Fragment implements OnMapReadyCallback, LocationListener {
+public class MapDayFragment extends Fragment implements OnMapReadyCallback, LocationListener
+{
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 00001;
     private static String TAG = FinancesDayFragment.class.getSimpleName();
 
     private SupportMapFragment mSupportMapFragment;
 
-    private MapView mapView_;
     private GoogleMap map_;
-    private LocationManager locManager_;
+    boolean movedByApi_ = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,35 +90,7 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
         if (mSupportMapFragment != null)
             mSupportMapFragment.getMapAsync(this);
 
-        // Use the location manager through GPS
-        locManager_ = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return TODO;
-        }
-        locManager_.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-
-        //get the current location (last known location) from the location manager
-        Location location = locManager_.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-
-        //if location found display as a toast the current latitude and longitude
-        if (location != null) {
-
-        } else {
-
-        }
-
-        //when the current location is found – stop listening for updates (preserves battery)
-        locManager_.removeUpdates(this);
+        getCurrentLocation();
 
         return rootView;
     }
@@ -131,23 +110,62 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
         return permissionRequested;
     }
 
+    @SuppressWarnings({"MissingPermission"})
+    private Location getCurrentLocation()
+    {
+        if (requestedMapPermission())
+            return null;
+
+        LocationManager locManager;
+        // Use the location manager through GPS
+        locManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+
+        //get the current location (last known location) from the location manager
+        Location location = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        //when the current location is found – stop listening for updates (preserves battery)
+        locManager.removeUpdates(this);
+
+        return location;
+    }
+
+    private void saveMarker(String userId, String tripKey, CustomMarker customMarker)
+    {
+        String dayKey = database_.child("days").push().getKey();
+        DayInfo dayInfo = new DayInfo(userId, tripKey, "Day "+i, "", plusDate(tripInfo.startDate_,i));
+        Map<String, Object> postValues = dayInfo.toMap();
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/days/" + dayKey, postValues);
+        childUpdates.put("/trips-days/" + tripKey + "/" + dayKey, postValues);
+        database_.updateChildren(childUpdates);
+    }
 
     private void mapReadyLogic(GoogleMap map)
     {
-//        if (requestedMapPermission())
-//            return;
+        if (requestedMapPermission())
+            return;
 
         map.getUiSettings().setAllGesturesEnabled(true);
 
         // Add a marker in Sydney and move the camera
+        // This is a mock location so the camera animation looks nicer.
         LatLng marker_latlng = new LatLng(-34, 151);
-//        map.addMarker(new MarkerOptions().position(marker_latlng).title("Marker in marker_latlng"));
         map.moveCamera(CameraUpdateFactory.newLatLng(marker_latlng));
 
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
         MapsInitializer.initialize(this.getActivity());
+
+        Location location = getCurrentLocation();
+        //if location found display as a toast the current latitude and longitude
+        if (location != null)
+            Log.d(TAG, "Current location is, lat: " + location.getLatitude() + " long: " + location.getLongitude());
+        else
+            Log.w(TAG, "Couldn't get current location this time.");
+
        // Updates the location and zoom of the MapView
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(43.1, -87.9), 10);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10);
         map.animateCamera(cameraUpdate);
     }
 
@@ -156,29 +174,26 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
     {
         switch (requestCode)
         {
-        case MY_PERMISSIONS_REQUEST_LOCATION:
+            case MY_PERMISSIONS_REQUEST_LOCATION:
             {
-            // If request is cancelled, the result arrays are empty.
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            {
-
-                // permission was granted, yay!
-                mapReadyLogic(map_);
-
-            }
-            else
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
+                    // permission was granted, yay!
+                    mapReadyLogic(map_);
+                }
+                else
+                {
+                    // permission denied, boo!
+                }
 
-                // permission denied, boo!
+                return;
             }
 
-            return;
+            // other 'case' lines to check for other
+            // permissions this app might request
         }
-
-        // other 'case' lines to check for other
-        // permissions this app might request
-    }
     }
 
     @Override
@@ -188,6 +203,16 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
         {
             map_ = googleMap;
             mapReadyLogic(map_);
+
+            map_.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng)
+                {
+                    Marker newmarker = map_.addMarker(new MarkerOptions().position(latLng).title("marker title").icon(BitmapDescriptorFactory.fromResource(R.drawable.map_markers)));
+
+//                    map_.addMarker(new MarkerOptions().position(latLng));
+                }
+            });
         }
     }
 

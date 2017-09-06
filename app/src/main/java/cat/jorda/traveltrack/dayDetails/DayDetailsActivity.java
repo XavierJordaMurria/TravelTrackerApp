@@ -23,7 +23,6 @@ import cat.jorda.traveltrack.BaseActivity;
 import cat.jorda.traveltrack.R;
 import cat.jorda.traveltrack.SignInActivity;
 import cat.jorda.traveltrack.model.CustomMarker;
-import cat.jorda.traveltrack.model.DayInfo;
 import cat.jorda.traveltrack.model.MarkerType;
 import cat.jorda.traveltrack.util.Constants;
 
@@ -31,11 +30,10 @@ import cat.jorda.traveltrack.util.Constants;
  * Created by xj1 on 21/08/2017.
  */
 
-public class  DayDetailsActivity extends BaseActivity {
+public class  DayDetailsActivity extends BaseActivity implements MapDayFragment.IMapDayFragment{
 
     private static final String TAG = "MainActivity";
 
-    private FragmentPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
 
     private String tripKey_;
@@ -58,14 +56,49 @@ public class  DayDetailsActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        FragmentPagerAdapter pagerAdapter = setUpFragmentPageAdapter(tripKey_, dayKey_);
+
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.day_container);
+        mViewPager.setAdapter(pagerAdapter);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+
+        // Button launches NewPostActivity
+        findViewById(R.id.fab_day_details).setOnClickListener(v -> {
+//                startActivity(new Intent(DayDetailsActivity.this, NewPostActivity.class));
+        });
+
+        // [START initialize_database_ref]
+        database_ = FirebaseDatabase.getInstance().getReference();
+        // [END initialize_database_ref]
+    }
+
+    private FragmentPagerAdapter setUpFragmentPageAdapter(String tripkey, String dayKey)
+    {
+        FragmentPagerAdapter pagerAdapter;
+        Bundle args = new Bundle();
+        args.putString(Constants.TRIP_KEY, tripKey_);
+        args.putString(Constants.DAY_KEY, dayKey_);
+
+        MapDayFragment mapFragment = new MapDayFragment();
+        mapFragment.setArguments(args);
+
+        FinancesDayFragment financesDayFragment = new FinancesDayFragment();
+        financesDayFragment.setArguments(args);
+
+        NotesDayFragment notesDayFragment = new NotesDayFragment();
+        notesDayFragment.setArguments(args);
+
         // Create the adapter that will return a fragment for each section
-        mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager())
+        pagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager())
         {
             private final Fragment[] mFragments = new Fragment[] {
-                    new MapDayFragment(),
-                    new FinancesDayFragment(),
-                    new NotesDayFragment(),
+                    mapFragment,
+                    financesDayFragment,
+                    notesDayFragment,
             };
+
             private final String[] mFragmentNames = new String[] {
                     getString(R.string.day_maps),
                     getString(R.string.day_finances),
@@ -85,23 +118,10 @@ public class  DayDetailsActivity extends BaseActivity {
             }
         };
 
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.day_container);
-        mViewPager.setAdapter(mPagerAdapter);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-
-        // Button launches NewPostActivity
-        findViewById(R.id.fab_day_details).setOnClickListener(v -> {
-//                startActivity(new Intent(DayDetailsActivity.this, NewPostActivity.class));
-        });
-
-        // [START initialize_database_ref]
-        database_ = FirebaseDatabase.getInstance().getReference();
-        // [END initialize_database_ref]
+        return pagerAdapter;
     }
 
-    void saveMarker(Marker marker)
+    private void saveMarker(Marker marker)
     {
         String markerKey = database_.child("marker").push().getKey();
 
@@ -109,29 +129,38 @@ public class  DayDetailsActivity extends BaseActivity {
         Map<String, Object> postValues = customMarker.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/customMarkers/" + markerKey, postValues);
-        childUpdates.put("/days-customMarkers/" + dayKey_ + "/" + markerKey, postValues);
+        childUpdates.put("/" + Constants.MARKERS_TAB + "/" + markerKey, postValues);
+        childUpdates.put("/" + Constants.DAY_MARKERS_TAB + "/" + dayKey_ + "/" + markerKey, postValues);
         database_.updateChildren(childUpdates);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.menu_day_details, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         int i = item.getItemId();
-        if (i == R.id.action_logout) {
+
+        if (i == R.id.action_logout)
+        {
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(this, SignInActivity.class));
             finish();
             return true;
-        } else {
-            return super.onOptionsItemSelected(item);
         }
+        else
+            return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onAddedMarker(Marker marker)
+    {
+        saveMarker(marker);
+    }
 }
 

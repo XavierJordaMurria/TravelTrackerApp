@@ -2,12 +2,12 @@ package cat.jorda.traveltrack.model;
 
 import android.support.annotation.IntDef;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 
+import cat.jorda.traveltrack.util.LatLng;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.HashMap;
@@ -29,8 +29,10 @@ public class CustomMarker
     public String dayID_;
     @PropertyName("title")
     public String title_;
-    @PropertyName("geoPosition")
-    public LatLng geoPosition_;
+    @PropertyName("latitude")
+    public double latitude_;
+    @PropertyName("longitude")
+    public double longitude_;
     @PropertyName("listPosition")
     public String listPosition_;
     @PropertyName("type")
@@ -49,7 +51,8 @@ public class CustomMarker
         tripID_ = tripID;
         dayID_  = dayID;
         title_  = marker.getTitle();
-        geoPosition_    = marker.getPosition();
+        latitude_   = marker.getPosition().latitude;
+        longitude_  = marker.getPosition().longitude;
         type_   = type;
         marker_   = marker;
     }
@@ -60,8 +63,10 @@ public class CustomMarker
         HashMap<String, Object> result = new HashMap<>();
         result.put("userID", userID_);
         result.put("tripID", tripID_);
+        result.put("dayID", dayID_);
         result.put("title", title_);
-        result.put("geoPosition", geoPosition_);
+        result.put("latitude", latitude_);
+        result.put("longitude", longitude_);
         result.put("type", type_);
         return result;
     }

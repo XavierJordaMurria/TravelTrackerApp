@@ -21,7 +21,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,15 +30,19 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import cat.jorda.traveltrack.AddTripActivity;
 import cat.jorda.traveltrack.R;
 import cat.jorda.traveltrack.model.CustomMarker;
-import cat.jorda.traveltrack.model.DayInfo;
-import cat.jorda.traveltrack.model.TripInfo;
+import cat.jorda.traveltrack.util.Constants;
 
 /**
  * Created by xj1 on 22/08/2017.
@@ -53,34 +56,50 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
     private SupportMapFragment mSupportMapFragment;
 
     private GoogleMap map_;
-    boolean movedByApi_ = false;
+    private IMapDayFragment delegate_;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    private String tripKey_;
+    private String dayKey_;
 
-        Log.d(TAG, "onCreate");
+    public interface IMapDayFragment
+    {
+        void onAddedMarker(Marker marker);
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onCreate(@Nullable Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+
+        Log.d(TAG, "onCreate");
+
+        tripKey_ = getArguments().getString(Constants.TRIP_KEY);
+        dayKey_ = getArguments().getString(Constants.DAY_KEY);
+    }
+
+    @Override
+    public void onAttach(Context context)
+    {
         super.onAttach(context);
 
-//        if(context instanceof DayListFragment.ItemSelectedListener)  // context instanceof YourActivity
-//            this.listener_ = (DayListFragment.ItemSelectedListener) context; // = (YourActivity) context
-//        else
-//            throw new ClassCastException(context.toString()
-//                    + " must implement StepsFragment.OnItemSelectedListener");
+        if(context instanceof MapDayFragment.IMapDayFragment)  // context instanceof YourActivity
+            this.delegate_ = (MapDayFragment.IMapDayFragment) context; // = (YourActivity) context
+        else
+            throw new ClassCastException(context.toString()
+                    + " must implement StepsFragment.OnItemSelectedListener");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             Bundle savedInstanceState)
+    {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(cat.jorda.traveltrack.R.layout.map_details, container, false);
 
         mSupportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapView);
-        if (mSupportMapFragment == null) {
+
+        if (mSupportMapFragment == null)
+        {
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             mSupportMapFragment = SupportMapFragment.newInstance();
@@ -92,10 +111,36 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
 
         getCurrentLocation();
 
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+        Query postsQuery = getQuery(reference);
+
+        postsQuery.addValueEventListener(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                for (DataSnapshot markerSnapShot: dataSnapshot.getChildren())
+                {
+                    CustomMarker customMarker = markerSnapShot.getValue(CustomMarker.class);
+                    Map<String, Object> message = (Map<String, Object>)markerSnapShot.getValue();
+                    String dayID = (String) markerSnapShot.child("dayID").getValue();
+                    String title = (String) markerSnapShot.child("title").getValue();
+                    Log.d(TAG,"DayID: " + dayID + " title:" + title);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError)
+            {
+            }
+        });
+
         return rootView;
     }
 
-    private boolean requestedMapPermission() {
+    private boolean requestedMapPermission()
+    {
 
         boolean permissionRequested = false;
 
@@ -184,6 +229,13 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
         }
     }
 
+    public Query getQuery(DatabaseReference databaseReference)
+    {
+        // All my days
+        return databaseReference.child(Constants.DAY_MARKERS_TAB)
+                .child(dayKey_);
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap)
     {
@@ -192,14 +244,9 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
             map_ = googleMap;
             mapReadyLogic(map_);
 
-            map_.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(LatLng latLng)
-                {
-                    Marker newmarker = map_.addMarker(new MarkerOptions().position(latLng).title("marker title").icon(BitmapDescriptorFactory.fromResource(R.drawable.map_markers)));
-
-//                    map_.addMarker(new MarkerOptions().position(latLng));
-                }
+            map_.setOnMapClickListener(latLng -> {
+                Marker newMarker = map_.addMarker(new MarkerOptions().position(latLng).title("marker title").icon(BitmapDescriptorFactory.fromResource(R.drawable.map_markers)));
+                delegate_.onAddedMarker(newMarker);
             });
         }
     }

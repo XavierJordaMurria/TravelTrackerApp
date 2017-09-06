@@ -138,24 +138,27 @@ public class DayListFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroy()
+    {
         super.onDestroy();
-        if (adapter_ != null) {
+
+        if (adapter_ != null)
             adapter_.cleanup();
-        }
     }
 
     public String getUid() {
         return FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
-    public Query getQuery(DatabaseReference databaseReference) {
-        // All my posts
+    public Query getQuery(DatabaseReference databaseReference)
+    {
+        // All my days
         return databaseReference.child("trips-days")
                 .child(tripKey_);
     }
 
-    private int getCardsNumberOnScreen() {
+    private int getCardsNumberOnScreen()
+    {
         int cardsNumber;
 
         int screenSize = getResources().getConfiguration().screenLayout &

@@ -7,4 +7,9 @@ package cat.jorda.traveltrack.util;
 public class Constants {
     public static String TRIP_KEY = "TRIP_KEY";
     public static String DAY_KEY = "DAY_KEY";
+
+
+    /** FIREBASE TABLES(GRUPS) NAMES **/
+    public static String MARKERS_TAB = "customMakers";
+    public static String DAY_MARKERS_TAB = "day-customMakers";
 }

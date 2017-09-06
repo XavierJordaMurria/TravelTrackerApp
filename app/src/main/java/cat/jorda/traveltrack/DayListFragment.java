@@ -42,7 +42,7 @@ public class DayListFragment extends Fragment {
     public interface ItemSelectedListener
     {
         // This can be any number of events to be sent to the activity
-        void onDaySelected(String daySelectedKey);
+        void onDaySelected(String daySelectedKey, String tripKey);
     }
 
     public DayListFragment() {}
@@ -119,7 +119,7 @@ public class DayListFragment extends Fragment {
                 final String dayKey = dayRef.getKey();
                 viewHolder.itemView.setOnClickListener(v -> {
                     //Load the day details screen
-                    listener_.onDaySelected(dayKey);
+                    listener_.onDaySelected(dayKey, tripKey_);
                 });
 
                 // Bind Post to ViewHolder, setting OnClickListener for the star button

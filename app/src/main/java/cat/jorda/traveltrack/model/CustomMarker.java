@@ -17,13 +17,6 @@ import java.util.Map;
  * Created by xj1 on 07/08/2017.
  */
 
-
-@IntDef({Type.LOCATION})
-@Retention(RetentionPolicy.SOURCE)
-@interface Type {
-    int LOCATION = 0;
-}
-
 // [START blog_user_class]
 @IgnoreExtraProperties
 public class CustomMarker
@@ -32,6 +25,8 @@ public class CustomMarker
     public String userID_;
     @PropertyName("tripID")
     public String tripID_;
+    @PropertyName("dayID")
+    public String dayID_;
     @PropertyName("title")
     public String title_;
     @PropertyName("geoPosition")
@@ -39,7 +34,7 @@ public class CustomMarker
     @PropertyName("listPosition")
     public String listPosition_;
     @PropertyName("type")
-    public @Type int type_;
+    public @MarkerType.IMarkerType int type_;
 
     private Marker marker_;
 
@@ -47,11 +42,12 @@ public class CustomMarker
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public CustomMarker(String userID, String tripID,
-                   Marker marker, @Type int type)
+    public CustomMarker(String userID, String tripID, String dayID,
+                   Marker marker, @MarkerType.IMarkerType int type)
     {
         userID_ = userID;
         tripID_ = tripID;
+        dayID_  = dayID;
         title_  = marker.getTitle();
         geoPosition_    = marker.getPosition();
         type_   = type;

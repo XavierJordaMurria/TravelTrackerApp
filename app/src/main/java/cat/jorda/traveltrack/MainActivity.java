@@ -85,9 +85,10 @@ public class MainActivity extends BaseActivity implements  TripListFragment.Item
     }
 
     @Override
-    public void onDaySelected(String daySelectedKey)
+    public void onDaySelected(String daySelectedKey, String tripKey)
     {
         Intent intent = new Intent(this, DayDetailsActivity.class);
+        intent.putExtra(Constants.TRIP_KEY, tripKey);
         intent.putExtra(Constants.DAY_KEY, daySelectedKey);
         startActivity(intent);
     }

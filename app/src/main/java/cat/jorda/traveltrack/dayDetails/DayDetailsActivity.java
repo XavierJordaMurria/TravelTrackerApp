@@ -11,13 +11,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import cat.jorda.traveltrack.BaseActivity;
 import cat.jorda.traveltrack.R;
 import cat.jorda.traveltrack.SignInActivity;
+import cat.jorda.traveltrack.model.CustomMarker;
+import cat.jorda.traveltrack.model.DayInfo;
+import cat.jorda.traveltrack.model.MarkerType;
+import cat.jorda.traveltrack.util.Constants;
 
 /**
  * Created by xj1 on 21/08/2017.
@@ -30,6 +38,8 @@ public class  DayDetailsActivity extends BaseActivity {
     private FragmentPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
 
+    private String tripKey_;
+    private String dayKey_;
     // [START declare_database_ref]
     private DatabaseReference database_;
     // [END declare_database_ref]
@@ -39,6 +49,10 @@ public class  DayDetailsActivity extends BaseActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.day_details_activity);
+
+        Intent intent = this.getIntent();
+        tripKey_ = intent.getStringExtra(Constants.TRIP_KEY);
+        dayKey_ = intent.getStringExtra(Constants.DAY_KEY);
 
         getSupportActionBar().setTitle("Days");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -85,6 +99,19 @@ public class  DayDetailsActivity extends BaseActivity {
         // [START initialize_database_ref]
         database_ = FirebaseDatabase.getInstance().getReference();
         // [END initialize_database_ref]
+    }
+
+    void saveMarker(Marker marker)
+    {
+        String markerKey = database_.child("marker").push().getKey();
+
+        CustomMarker customMarker = new CustomMarker("", tripKey_, dayKey_,marker, MarkerType.MARKER_LOCATION);
+        Map<String, Object> postValues = customMarker.toMap();
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/customMarkers/" + markerKey, postValues);
+        childUpdates.put("/days-customMarkers/" + dayKey_ + "/" + markerKey, postValues);
+        database_.updateChildren(childUpdates);
     }
 
     @Override

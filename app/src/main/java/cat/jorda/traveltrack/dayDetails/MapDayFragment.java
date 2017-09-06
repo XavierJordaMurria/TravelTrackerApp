@@ -130,18 +130,6 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
         return location;
     }
 
-    private void saveMarker(String userId, String tripKey, CustomMarker customMarker)
-    {
-        String dayKey = database_.child("days").push().getKey();
-        DayInfo dayInfo = new DayInfo(userId, tripKey, "Day "+i, "", plusDate(tripInfo.startDate_,i));
-        Map<String, Object> postValues = dayInfo.toMap();
-
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/days/" + dayKey, postValues);
-        childUpdates.put("/trips-days/" + tripKey + "/" + dayKey, postValues);
-        database_.updateChildren(childUpdates);
-    }
-
     private void mapReadyLogic(GoogleMap map)
     {
         if (requestedMapPermission())

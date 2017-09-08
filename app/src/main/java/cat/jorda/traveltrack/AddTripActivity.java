@@ -34,7 +34,7 @@ import cat.jorda.traveltrack.model.User;
  * Created by xj1 on 08/08/2017.
  */
 
-public class AddTripActivity extends BaseActivity implements View.OnTouchListener
+public class AddTripActivity extends AddActivity //implements View.OnTouchListener
 {
     private static String TAG = AddTripActivity.class.getSimpleName();
     private String REQUIRED = "REQUIRED";
@@ -84,97 +84,96 @@ public class AddTripActivity extends BaseActivity implements View.OnTouchListene
         viewHolder_.saveTrip_.setOnClickListener(v->saveTrip());
     }
 
-    public boolean onTouch(View view, MotionEvent event) {
+    @Override
+    public void onTouchActionDown(int rawY)
+    {
+        // save default base layout height
+        defaultViewHeight_ = baseLayout_.getHeight();
 
-        // Get finger position on screen
-        final int Y = (int) event.getRawY();
+        // Init finger and view position
+        previousFingerPosition_ = rawY;
+        baseLayoutPosition_ = (int) baseLayout_.getY();
+    }
 
-        // Switch on motion event type
-        switch (event.getAction() & MotionEvent.ACTION_MASK) {
-
-            case MotionEvent.ACTION_DOWN:
-                // save default base layout height
-                defaultViewHeight_ = baseLayout_.getHeight();
-
-                // Init finger and view position
-                previousFingerPosition_ = Y;
-                baseLayoutPosition_ = (int) baseLayout_.getY();
-                break;
-
-            case MotionEvent.ACTION_UP:
-                // If user was doing a scroll up
-                if(isScrollingUp_)
-                {
-                    // Reset baselayout position
-                    baseLayout_.setY(0);
-                    // We are not in scrolling up mode anymore
-                    isScrollingUp_ = false;
-                }
-
-                // If user was doing a scroll down
-                if(isScrollingDown_){
-                    // Reset baselayout position
-                    baseLayout_.setY(0);
-                    // Reset base layout size
-                    baseLayout_.getLayoutParams().height = defaultViewHeight_;
-                    baseLayout_.requestLayout();
-                    // We are not in scrolling down mode anymore
-                    isScrollingDown_ = false;
-                }
-                break;
-            case MotionEvent.ACTION_MOVE:
-
-                if(!isClosing_){
-                    int currentYPosition = (int) baseLayout_.getY();
-
-                    // If we scroll up
-                    if(previousFingerPosition_ >Y){
-                        // First time android rise an event for "up" move
-                        if(!isScrollingUp_){
-                            isScrollingUp_ = true;
-                        }
-
-                        // Has user scroll down before -> view is smaller than it's default size -> resize it instead of change it position
-                        if(baseLayout_.getHeight()<defaultViewHeight_){
-                            baseLayout_.getLayoutParams().height = baseLayout_.getHeight() - (Y - previousFingerPosition_);
-                            baseLayout_.requestLayout();
-                        }
-                        else {
-                            // Has user scroll enough to "auto close" popup ?
-                            if ((baseLayoutPosition_ - currentYPosition) > defaultViewHeight_ / 4) {
-                                closeUpAndDismissDialog(currentYPosition);
-                                return true;
-                            }
-                        }
-
-                        baseLayout_.setY(baseLayout_.getY() + (Y - previousFingerPosition_));
-                    }
-                    // If we scroll down
-                    else{
-                        // First time android rise an event for "down" move
-                        if(!isScrollingDown_){
-                            isScrollingDown_ = true;
-                        }
-
-                        // Has user scroll enough to "auto close" popup ?
-                        if (Math.abs(baseLayoutPosition_ - currentYPosition) > defaultViewHeight_ / 2)
-                        {
-                            closeDownAndDismissDialog(currentYPosition);
-                            return true;
-                        }
-
-                        // Change base layout size and position (must change position because view anchor is top left corner)
-                        baseLayout_.setY(baseLayout_.getY() + (Y - previousFingerPosition_));
-                        baseLayout_.getLayoutParams().height = baseLayout_.getHeight() - (Y - previousFingerPosition_);
-                        baseLayout_.requestLayout();
-                    }
-
-                    // Update position
-                    previousFingerPosition_ = Y;
-                }
-                break;
+    @Override
+    public void onTouchActionUp()
+    {
+        // If user was doing a scroll up
+        if(isScrollingUp_)
+        {
+            // Reset baselayout position
+            baseLayout_.setY(0);
+            // We are not in scrolling up mode anymore
+            isScrollingUp_ = false;
         }
-        return true;
+
+        // If user was doing a scroll down
+        if(isScrollingDown_){
+            // Reset baselayout position
+            baseLayout_.setY(0);
+            // Reset base layout size
+            baseLayout_.getLayoutParams().height = defaultViewHeight_;
+            baseLayout_.requestLayout();
+            // We are not in scrolling down mode anymore
+            isScrollingDown_ = false;
+        }
+    }
+
+    @Override
+    public boolean onTouchActionMove(int rawY)
+    {
+        if(!isClosing_)
+        {
+            int currentYPosition = (int) baseLayout_.getY();
+
+            // If we scroll up
+            if(previousFingerPosition_ >rawY)
+            {
+                // First time android rise an event for "up" move
+                if(!isScrollingUp_){
+                    isScrollingUp_ = true;
+                }
+
+                // Has user scroll down before -> view is smaller than it's default size -> resize it instead of change it position
+                if(baseLayout_.getHeight()<defaultViewHeight_){
+                    baseLayout_.getLayoutParams().height = baseLayout_.getHeight() - (rawY - previousFingerPosition_);
+                    baseLayout_.requestLayout();
+                }
+                else {
+                    // Has user scroll enough to "auto close" popup ?
+                    if ((baseLayoutPosition_ - currentYPosition) > defaultViewHeight_ / 4) {
+                        closeUpAndDismissDialog(currentYPosition);
+                        return true;
+                    }
+                }
+
+                baseLayout_.setY(baseLayout_.getY() + (rawY - previousFingerPosition_));
+            }
+            // If we scroll down
+            else{
+                // First time android rise an event for "down" move
+                if(!isScrollingDown_){
+                    isScrollingDown_ = true;
+                }
+
+                // Has user scroll enough to "auto close" popup ?
+                if (Math.abs(baseLayoutPosition_ - currentYPosition) > defaultViewHeight_ / 2)
+                {
+                    closeDownAndDismissDialog(currentYPosition);
+                    return true;
+                }
+
+                // Change base layout size and position (must change position because view anchor is top left corner)
+                baseLayout_.setY(baseLayout_.getY() + (rawY - previousFingerPosition_));
+                baseLayout_.getLayoutParams().height = baseLayout_.getHeight() - (rawY - previousFingerPosition_);
+                baseLayout_.requestLayout();
+            }
+
+            // Update position
+            previousFingerPosition_ = rawY;
+        }
+
+        return false;
     }
 
     private void saveTrip()
@@ -230,7 +229,7 @@ public class AddTripActivity extends BaseActivity implements View.OnTouchListene
                                     "Error: could not fetch user.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            // Write new post
+                            // Write new trip
                             writeNewTrip(userId, user.username,
                                     title, startingDate,
                                     endingDate, country, shortDescription);

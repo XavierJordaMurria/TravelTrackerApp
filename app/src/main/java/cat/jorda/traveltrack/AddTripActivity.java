@@ -1,21 +1,13 @@
 package cat.jorda.traveltrack;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
-import android.app.Activity;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Display;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -38,19 +30,6 @@ public class AddTripActivity extends AddActivity //implements View.OnTouchListen
 {
     private static String TAG = AddTripActivity.class.getSimpleName();
     private String REQUIRED = "REQUIRED";
-    private RelativeLayout baseLayout_;
-
-    private int previousFingerPosition_ = 0;
-    private int baseLayoutPosition_ = 0;
-    private int defaultViewHeight_;
-
-    private boolean isClosing_ = false;
-    private boolean isScrollingUp_ = false;
-    private boolean isScrollingDown_ = false;
-
-    // [START declare_database_ref]
-    private DatabaseReference database_;
-    // [END declare_database_ref]
 
     private AddTripViewHolder viewHolder_;
 
@@ -69,7 +48,8 @@ public class AddTripActivity extends AddActivity //implements View.OnTouchListen
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         // [START initialize_database_ref]
@@ -84,98 +64,6 @@ public class AddTripActivity extends AddActivity //implements View.OnTouchListen
         viewHolder_.saveTrip_.setOnClickListener(v->saveTrip());
     }
 
-    @Override
-    public void onTouchActionDown(int rawY)
-    {
-        // save default base layout height
-        defaultViewHeight_ = baseLayout_.getHeight();
-
-        // Init finger and view position
-        previousFingerPosition_ = rawY;
-        baseLayoutPosition_ = (int) baseLayout_.getY();
-    }
-
-    @Override
-    public void onTouchActionUp()
-    {
-        // If user was doing a scroll up
-        if(isScrollingUp_)
-        {
-            // Reset baselayout position
-            baseLayout_.setY(0);
-            // We are not in scrolling up mode anymore
-            isScrollingUp_ = false;
-        }
-
-        // If user was doing a scroll down
-        if(isScrollingDown_){
-            // Reset baselayout position
-            baseLayout_.setY(0);
-            // Reset base layout size
-            baseLayout_.getLayoutParams().height = defaultViewHeight_;
-            baseLayout_.requestLayout();
-            // We are not in scrolling down mode anymore
-            isScrollingDown_ = false;
-        }
-    }
-
-    @Override
-    public boolean onTouchActionMove(int rawY)
-    {
-        if(!isClosing_)
-        {
-            int currentYPosition = (int) baseLayout_.getY();
-
-            // If we scroll up
-            if(previousFingerPosition_ >rawY)
-            {
-                // First time android rise an event for "up" move
-                if(!isScrollingUp_){
-                    isScrollingUp_ = true;
-                }
-
-                // Has user scroll down before -> view is smaller than it's default size -> resize it instead of change it position
-                if(baseLayout_.getHeight()<defaultViewHeight_){
-                    baseLayout_.getLayoutParams().height = baseLayout_.getHeight() - (rawY - previousFingerPosition_);
-                    baseLayout_.requestLayout();
-                }
-                else {
-                    // Has user scroll enough to "auto close" popup ?
-                    if ((baseLayoutPosition_ - currentYPosition) > defaultViewHeight_ / 4) {
-                        closeUpAndDismissDialog(currentYPosition);
-                        return true;
-                    }
-                }
-
-                baseLayout_.setY(baseLayout_.getY() + (rawY - previousFingerPosition_));
-            }
-            // If we scroll down
-            else{
-                // First time android rise an event for "down" move
-                if(!isScrollingDown_){
-                    isScrollingDown_ = true;
-                }
-
-                // Has user scroll enough to "auto close" popup ?
-                if (Math.abs(baseLayoutPosition_ - currentYPosition) > defaultViewHeight_ / 2)
-                {
-                    closeDownAndDismissDialog(currentYPosition);
-                    return true;
-                }
-
-                // Change base layout size and position (must change position because view anchor is top left corner)
-                baseLayout_.setY(baseLayout_.getY() + (rawY - previousFingerPosition_));
-                baseLayout_.getLayoutParams().height = baseLayout_.getHeight() - (rawY - previousFingerPosition_);
-                baseLayout_.requestLayout();
-            }
-
-            // Update position
-            previousFingerPosition_ = rawY;
-        }
-
-        return false;
-    }
-
     private void saveTrip()
     {
         final String title  = viewHolder_.title_.getText().toString();
@@ -185,25 +73,29 @@ public class AddTripActivity extends AddActivity //implements View.OnTouchListen
         final String shortDescription   = viewHolder_.shortDescription_.getText().toString();
 
         // Title is required
-        if (TextUtils.isEmpty(title)) {
+        if (TextUtils.isEmpty(title))
+        {
             viewHolder_.title_.setError(REQUIRED);
             return;
         }
 
         // startingDate_ is required
-        if (TextUtils.isEmpty(startingDate)) {
+        if (TextUtils.isEmpty(startingDate))
+        {
             viewHolder_.startingDate_.setError(REQUIRED);
             return;
         }
 
         // endingDate_ is required
-        if (TextUtils.isEmpty(endingDate)) {
+        if (TextUtils.isEmpty(endingDate))
+        {
             viewHolder_.endingDate_.setError(REQUIRED);
             return;
         }
 
         // country is required
-        if (TextUtils.isEmpty(country)) {
+        if (TextUtils.isEmpty(country))
+        {
             viewHolder_.country_.setError(REQUIRED);
             return;
         }
@@ -215,20 +107,25 @@ public class AddTripActivity extends AddActivity //implements View.OnTouchListen
         // [START single_value_read]
         final String userId = getUid();
         database_.child("users").child(userId).addListenerForSingleValueEvent(
-                new ValueEventListener() {
+                new ValueEventListener()
+                {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChange(DataSnapshot dataSnapshot)
+                    {
                         // Get user value
                         User user = dataSnapshot.getValue(User.class);
 
                         // [START_EXCLUDE]
-                        if (user == null) {
+                        if (user == null)
+                        {
                             // User is null, error out
                             Log.e(TAG, "User " + userId + " is unexpectedly null");
                             Toast.makeText(AddTripActivity.this,
                                     "Error: could not fetch user.",
                                     Toast.LENGTH_SHORT).show();
-                        } else {
+                        }
+                        else
+                            {
                             // Write new trip
                             writeNewTrip(userId, user.username,
                                     title, startingDate,
@@ -242,7 +139,8 @@ public class AddTripActivity extends AddActivity //implements View.OnTouchListen
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelled(DatabaseError databaseError)
+                    {
                         Log.w(TAG, "getUser:onCancelled", databaseError.toException());
                         // [START_EXCLUDE]
                         viewHolder_.saveTrip_.setEnabled(true);
@@ -289,63 +187,11 @@ public class AddTripActivity extends AddActivity //implements View.OnTouchListen
     }
     // [END write_fan_out]
 
-    private void closeUpAndDismissDialog(int currentPosition){
-        isClosing_ = true;
-        ObjectAnimator positionAnimator = ObjectAnimator.ofFloat(baseLayout_, "y", currentPosition, -baseLayout_.getHeight());
-        positionAnimator.setDuration(300);
-        positionAnimator.addListener(new Animator.AnimatorListener()
-        {
-            @Override
-            public void onAnimationStart(Animator animation)
-            {}
-            @Override
-            public void onAnimationCancel(Animator animation)
-            {}
-            @Override
-            public void onAnimationRepeat(Animator animation)
-            {}
-
-            @Override
-            public void onAnimationEnd(Animator animator)
-            {
-                finish();
-            }
-        });
-        positionAnimator.start();
-    }
-
-    private void closeDownAndDismissDialog(int currentPosition){
-        isClosing_ = true;
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int screenHeight = size.y;
-        ObjectAnimator positionAnimator = ObjectAnimator.ofFloat(baseLayout_, "y", currentPosition, screenHeight + baseLayout_.getHeight());
-        positionAnimator.setDuration(300);
-        positionAnimator.addListener(new Animator.AnimatorListener()
-        {
-            @Override
-            public void onAnimationStart(Animator animation)
-            {}
-            @Override
-            public void onAnimationCancel(Animator animation)
-            {}
-            @Override
-            public void onAnimationRepeat(Animator animation)
-            {}
-            @Override
-            public void onAnimationEnd(Animator animator)
-            {
-                finish();
-            }
-        });
-        positionAnimator.start();
-    }
-
     /**
      * DateDiff -- compute the difference between two dates.
      */
-    public long dateDiff(YearMonthDay startDate, YearMonthDay endDate) {
+    private long dateDiff(YearMonthDay startDate, YearMonthDay endDate)
+    {
         Date d1 = new GregorianCalendar(startDate.year_, startDate.month_ -1, startDate.day_, 23, 59).getTime();
         Date d2 = new GregorianCalendar(endDate.year_, endDate.month_-1, endDate.day_, 23, 59).getTime();
 
@@ -358,7 +204,7 @@ public class AddTripActivity extends AddActivity //implements View.OnTouchListen
         return daysDiff;
     }
 
-    public String plusDate(String startDate, int numDays2Add)
+    private String plusDate(String startDate, int numDays2Add)
     {
         YearMonthDay yearMonthDay = new YearMonthDay(startDate);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");

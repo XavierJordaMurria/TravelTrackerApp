@@ -2,6 +2,8 @@ package cat.jorda.traveltrack.dayDetails;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -19,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
+import cat.jorda.traveltrack.AddTripActivity;
 import cat.jorda.traveltrack.BaseActivity;
 import cat.jorda.traveltrack.R;
 import cat.jorda.traveltrack.SignInActivity;
@@ -38,6 +41,8 @@ public class  DayDetailsActivity extends BaseActivity implements MapDayFragment.
 
     private String tripKey_;
     private String dayKey_;
+
+    private FloatingActionButton fab_;
     // [START declare_database_ref]
     private DatabaseReference database_;
     // [END declare_database_ref]
@@ -61,13 +66,9 @@ public class  DayDetailsActivity extends BaseActivity implements MapDayFragment.
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.day_container);
         mViewPager.setAdapter(pagerAdapter);
+
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
-        // Button launches NewPostActivity
-        findViewById(R.id.fab_day_details).setOnClickListener(v -> {
-//                startActivity(new Intent(DayDetailsActivity.this, NewPostActivity.class));
-        });
 
         // [START initialize_database_ref]
         database_ = FirebaseDatabase.getInstance().getReference();
@@ -162,5 +163,6 @@ public class  DayDetailsActivity extends BaseActivity implements MapDayFragment.
     {
         saveMarker(marker);
     }
+
 }
 

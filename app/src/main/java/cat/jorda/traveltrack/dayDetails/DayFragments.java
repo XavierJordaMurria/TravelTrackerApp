@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 
@@ -16,7 +17,6 @@ import cat.jorda.traveltrack.util.Constants;
 
 public abstract class DayFragments extends Fragment
 {
-
     private static String TAG = NotesDayFragment.class.getSimpleName();
     protected String tripKey_;
     protected String dayKey_;
@@ -31,5 +31,9 @@ public abstract class DayFragments extends Fragment
         dayKey_ = getArguments().getString(Constants.DAY_KEY);
     }
 
-    public abstract Query getQuery(DatabaseReference databaseReference);
+    protected abstract Query getQuery(DatabaseReference databaseReference);
+
+    public String getUid() {
+        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
 }

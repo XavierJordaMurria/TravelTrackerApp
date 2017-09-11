@@ -9,5 +9,6 @@
         android:layout_height="match_parent"
         android:clickable="true"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
+
 </RelativeLayout>
 

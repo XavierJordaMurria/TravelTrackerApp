@@ -197,9 +197,7 @@ public class AddTripActivity extends AddActivity //implements View.OnTouchListen
 
         // Get msec from each, and subtract.
         long diff = d2.getTime() - d1.getTime();
-
         long daysDiff = (diff / (1000 * 60 * 60 * 24));
-        Log.d(TAG,"The 21st century (up to " + d2 + ") is " + daysDiff + " days old.");
 
         return daysDiff;
     }
@@ -213,8 +211,6 @@ public class AddTripActivity extends AddActivity //implements View.OnTouchListen
         c.setTime(d1); // Now use today date.
         c.add(Calendar.DATE, numDays2Add); // Adding 5 days
         String output = sdf.format(c.getTime());
-
-        Log.d(TAG,"plusDate = " + output);
 
         return output;
     }

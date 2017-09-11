@@ -12,4 +12,5 @@ public class Constants {
     /** FIREBASE TABLES(GRUPS) NAMES **/
     public static String MARKERS_TAB = "customMakers";
     public static String DAY_MARKERS_TAB = "day-customMakers";
+    public static String DAY_EXPENSES = "day-expenses";
 }

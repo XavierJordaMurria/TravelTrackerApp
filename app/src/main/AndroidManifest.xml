@@ -43,6 +43,12 @@
         </activity>
 
         <activity
+            android:name=".AddExpensesActivity"
+            android:label="New Trip"
+            android:theme="@style/Theme.Transparent">
+        </activity>
+
+        <activity
             android:name=".dayDetails.DayDetailsActivity"
             android:theme="@style/AppTheme">
         </activity>

@@ -27,5 +27,7 @@
     <string name="country">Country:</string>
     <string name="short_description">Short Description:</string>
     <string name="tell_me_something_about_this_trip">Tell me something about this trip.</string>
-    <string name="save">save_trip</string>
+    <string name="save">Save</string>
+    <string name="expenses_name">Expenses name</string>
+    <string name="amount">Amount</string>
 </resources>

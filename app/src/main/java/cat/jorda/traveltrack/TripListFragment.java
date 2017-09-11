@@ -23,9 +23,9 @@ import com.google.firebase.database.Transaction;
 
 import cat.jorda.traveltrack.model.TripInfo;
 
-public class TripListFragment extends Fragment {
-
-    private static final String TAG = "BaseListFragment";
+public class TripListFragment extends Fragment
+{
+    private static final String TAG = TripListFragment.class.getSimpleName();
 
     // [START define_database_reference]
     private DatabaseReference database_;
@@ -36,7 +36,6 @@ public class TripListFragment extends Fragment {
     private FirebaseRecyclerAdapter<TripInfo, TripViewHolder> adapter_;
     private RecyclerView recycler_;
     private LinearLayoutManager manager_;
-
 
     // Define the events that the fragment will use to communicate
     public interface ItemSelectedListener
@@ -49,7 +48,8 @@ public class TripListFragment extends Fragment {
 
     @Override
     public View onCreateView (LayoutInflater inflater, ViewGroup container,
-                              Bundle savedInstanceState) {
+                              Bundle savedInstanceState)
+    {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.list_view, container, false);
 
@@ -64,7 +64,8 @@ public class TripListFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState)
+    {
         super.onActivityCreated(savedInstanceState);
 
         // Set up Layout Manager, reverse layout
@@ -102,6 +103,7 @@ public class TripListFragment extends Fragment {
         };
         recycler_.setAdapter(adapter_);
     }
+
     @Override
     public void onAttach(Context context)
     {

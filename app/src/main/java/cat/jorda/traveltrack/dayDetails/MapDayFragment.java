@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.*;
 
 import android.os.Bundle;
@@ -36,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.List;
 import java.util.Map;
 
 import cat.jorda.traveltrack.R;
@@ -148,6 +150,7 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                     MY_PERMISSIONS_REQUEST_LOCATION);
             permissionRequested = true;
+            Log.d(TAG, "requestedMapPermission requesting permissions for the ACCESS_FINE_LOCATION");
         }
 
         return permissionRequested;

@@ -17,8 +17,6 @@ public class Expenses
 {
     @PropertyName("userID")
     public String userID_;
-    @PropertyName("dayID")
-    public String dayID_;
     @PropertyName("name")
     public String name_;
     @PropertyName("amount")
@@ -28,11 +26,9 @@ public class Expenses
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Expenses(String uid, String dayID,
-                    String name, float amount)
+    public Expenses(String uid, String name, float amount)
     {
         userID_ = uid;
-        dayID_  = dayID;
         name_   = name;
         amount_ = amount;
     }
@@ -43,7 +39,6 @@ public class Expenses
     {
         HashMap<String, Object> result = new HashMap<>();
         result.put("userID", userID_);
-        result.put("dayID", dayID_);
         result.put("name", name_);
         result.put("amount", amount_);
         return result;

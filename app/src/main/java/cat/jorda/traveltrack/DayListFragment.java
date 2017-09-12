@@ -95,7 +95,8 @@ public class DayListFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState)
+    {
         super.onActivityCreated(savedInstanceState);
 
         Log.d(TAG, "onActivityCreated");
@@ -106,13 +107,42 @@ public class DayListFragment extends Fragment {
 //        manager_.setStackFromEnd(true);
         recycler_.setLayoutManager(manager_);
 
+        getDayDataFromDB();
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+
+        if (adapter_ != null)
+            adapter_.cleanup();
+    }
+
+    public String getUid() {
+        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
+
+    public Query getQuery(DatabaseReference databaseReference)
+    {
+        // All my days
+        return databaseReference.child("trips-days")
+                .child(tripKey_);
+    }
+
+    private void getDayDataFromDB()
+    {
+        if (tripKey_.isEmpty())
+            return;
+
         // Set up FirebaseRecyclerAdapter with the Query
         Query postsQuery = getQuery(database_);
         adapter_ = new FirebaseRecyclerAdapter<DayInfo, DayViewHolder>(DayInfo.class, R.layout.day_item,
                 DayViewHolder.class, postsQuery) {
 
             @Override
-            protected void populateViewHolder(final DayViewHolder viewHolder, final DayInfo model, final int position) {
+            protected void populateViewHolder(final DayViewHolder viewHolder, final DayInfo model, final int position)
+            {
                 final DatabaseReference dayRef = getRef(position);
 
                 // Set click listener for the whole post view
@@ -137,26 +167,6 @@ public class DayListFragment extends Fragment {
         recycler_.setAdapter(adapter_);
     }
 
-    @Override
-    public void onDestroy()
-    {
-        super.onDestroy();
-
-        if (adapter_ != null)
-            adapter_.cleanup();
-    }
-
-    public String getUid() {
-        return FirebaseAuth.getInstance().getCurrentUser().getUid();
-    }
-
-    public Query getQuery(DatabaseReference databaseReference)
-    {
-        // All my days
-        return databaseReference.child("trips-days")
-                .child(tripKey_);
-    }
-
     private int getCardsNumberOnScreen()
     {
         int cardsNumber;
@@ -177,5 +187,4 @@ public class DayListFragment extends Fragment {
         }
         return cardsNumber;
     }
-
 }

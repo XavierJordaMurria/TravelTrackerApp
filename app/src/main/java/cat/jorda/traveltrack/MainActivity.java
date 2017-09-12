@@ -22,66 +22,85 @@ import cat.jorda.traveltrack.util.Constants;
 
 import static cat.jorda.traveltrack.util.Constants.TRIP_KEY;
 
-public class MainActivity extends BaseActivity implements  TripListFragment.ItemSelectedListener, DayListFragment.ItemSelectedListener{
-
+public class MainActivity extends BaseActivity implements  TripListFragment.ItemSelectedListener, DayListFragment.ItemSelectedListener
+{
     private enum loadFrgType_ {ADD_FRG, REPLACE_FRG};
     private FloatingActionButton fab_;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         fab_ = (FloatingActionButton) findViewById(R.id.fab_new_trip);
         fab_.setOnClickListener(view -> onFabClick(view));
 
-        loadFragment(new TripListFragment(), loadFrgType_.REPLACE_FRG, R.id.recipe_steps_fragment_container, null);
+        FrameLayout details = (FrameLayout) findViewById(R.id.days_fragment_container);
+
+        if (savedInstanceState == null)
+        {
+            loadFragment(new TripListFragment(), loadFrgType_.REPLACE_FRG, R.id.trips_fragment_container, null);
+
+            if (details != null)
+                loadFragment(new DayListFragment(), loadFrgType_.REPLACE_FRG, R.id.days_fragment_container, null);
+
+        }
+        else if (currentFragment() instanceof TripListFragment &&
+                (details != null))
+        {
+            loadFragment(new TripListFragment(), loadFrgType_.REPLACE_FRG, R.id.trips_fragment_container, null);
+            loadFragment(new DayListFragment(), loadFrgType_.REPLACE_FRG, R.id.days_fragment_container, null);
+        }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings)
+        {
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(this, SignInActivity.class));
             finish();
             return true;
         }
-        else if (item.getItemId() == android.R.id.home) {
-            loadFragment(new TripListFragment(), loadFrgType_.REPLACE_FRG, R.id.recipe_steps_fragment_container, null);
+        else if (item.getItemId() == android.R.id.home)
+        {
+            loadFragment(new TripListFragment(), loadFrgType_.REPLACE_FRG, R.id.trips_fragment_container, null);
         }
 
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onTripSelected(String tripSelectedKey) {
-
+    public void onTripSelected(String tripSelectedKey)
+    {
         DayListFragment dayListFrag = new DayListFragment();
         Bundle args = new Bundle();
         args.putString(TRIP_KEY, tripSelectedKey);
 
-//        FrameLayout details = (FrameLayout) findViewById(R.id.recipe_step_fragment_details);
+        FrameLayout daysFrag = (FrameLayout) findViewById(R.id.days_fragment_container);
 
-//        if (details == null) {
-                loadFragment(dayListFrag, loadFrgType_.REPLACE_FRG, R.id.recipe_steps_fragment_container, args);
-//        } else {
-//                loadFragment(dayListFrag, loadFrgType_.REPLACE_FRG, R.id.recipe_step_fragment_details, args);
-//        }
+        if (daysFrag == null)
+                loadFragment(dayListFrag, loadFrgType_.REPLACE_FRG, R.id.trips_fragment_container, args);
+        else
+                loadFragment(dayListFrag, loadFrgType_.REPLACE_FRG, R.id.days_fragment_container, args);
+
         fab_.setVisibility(View.GONE);
-
     }
 
     @Override
@@ -100,18 +119,27 @@ public class MainActivity extends BaseActivity implements  TripListFragment.Item
                 .setAction("Action", null).show();
     }
 
-    private void loadFragment(Fragment newFragment, loadFrgType_ loadFrgType, int containerViewID, Bundle args) {
+    private Fragment currentFragment()
+    {
+        return getSupportFragmentManager().findFragmentById(R.id.trips_fragment_container);
+    }
+
+    private void loadFragment(Fragment newFragment, loadFrgType_ loadFrgType, int containerViewID, Bundle args)
+    {
         if (args != null)
             newFragment.setArguments(args);
 
         FragmentManager frgManager = getSupportFragmentManager();
 
-        if (loadFrgType == loadFrgType_.ADD_FRG) {
+        if (loadFrgType == loadFrgType_.ADD_FRG)
+        {
             frgManager
                     .beginTransaction()
                     .add(containerViewID, newFragment)
                     .commit();
-        } else {
+        }
+        else
+        {
             frgManager
                     .beginTransaction()
                     .replace(containerViewID, newFragment)

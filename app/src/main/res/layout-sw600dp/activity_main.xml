@@ -9,10 +9,24 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="cat.jorda.traveltrack.MainActivity">
 
-    <FrameLayout
-        android:id="@+id/trips_fragment_container"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="10">
+
+        <FrameLayout
+            android:id="@+id/trips_fragment_container"
+            android:layout_weight="3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"/>
+
+        <FrameLayout
+            android:id="@+id/days_fragment_container"
+            android:layout_weight="7"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_new_trip"

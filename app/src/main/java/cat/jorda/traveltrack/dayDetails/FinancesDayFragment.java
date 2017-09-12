@@ -18,9 +18,14 @@ import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Map;
 
 import cat.jorda.traveltrack.AddExpensesActivity;
 import cat.jorda.traveltrack.AddTripActivity;
@@ -28,6 +33,7 @@ import cat.jorda.traveltrack.DayListFragment;
 import cat.jorda.traveltrack.R;
 import cat.jorda.traveltrack.TripListFragment;
 import cat.jorda.traveltrack.TripViewHolder;
+import cat.jorda.traveltrack.model.CustomMarker;
 import cat.jorda.traveltrack.model.Expenses;
 import cat.jorda.traveltrack.model.TripInfo;
 import cat.jorda.traveltrack.util.Constants;
@@ -117,8 +123,11 @@ public class FinancesDayFragment extends DayFragments
 //                    listener_.onTripSelected(expensesKey);
                 });
 
-                // Bind Post to ViewHolder, setting OnClickListener for the star button
-                viewHolder.bindToTrip(model, starView -> {
+                if (model == null)
+                    return;
+
+                // Bind Expenses to ViewHolder, setting OnClickListener for the star button
+                viewHolder.bindToExpenses(getActivity().getApplicationContext(), model, starView -> {
                     // Need to write to both places the post is stored
 //                    DatabaseReference globalPostRef = database_.child("posts").child(postRef.getKey());
 //                    DatabaseReference userPostRef = database_.child("user-posts").child(model.uid).child(postRef.getKey());

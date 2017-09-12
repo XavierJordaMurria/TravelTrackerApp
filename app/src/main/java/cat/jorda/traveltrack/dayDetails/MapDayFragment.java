@@ -51,7 +51,7 @@ import cat.jorda.traveltrack.util.Constants;
 public class MapDayFragment extends Fragment implements OnMapReadyCallback, LocationListener
 {
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 00001;
-    private static String TAG = FinancesDayFragment.class.getSimpleName();
+    private static String TAG = MapDayFragment.class.getSimpleName();
 
     private SupportMapFragment mSupportMapFragment;
 

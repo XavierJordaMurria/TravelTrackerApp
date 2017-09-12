@@ -14,7 +14,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/expenses_title"
+            android:id="@+id/expenses_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -28,10 +28,10 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/amount"
+            android:id="@+id/expenses_amount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/expenses_title"
+            android:layout_below="@+id/expenses_name"
             android:fontFamily="casual"
             android:gravity="center"
             android:paddingBottom="8dp"
@@ -49,6 +49,7 @@
             android:fontFamily="casual"
             android:gravity="center"
             android:paddingBottom="8dp"
+            android:visibility="gone"
             android:paddingEnd="8dp"
             android:paddingTop="8dp"
             android:text="21/02/1988"

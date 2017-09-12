@@ -21,6 +21,7 @@ import java.util.Map;
 import cat.jorda.traveltrack.model.DayInfo;
 import cat.jorda.traveltrack.model.TripInfo;
 import cat.jorda.traveltrack.model.User;
+import cat.jorda.traveltrack.util.Constants;
 
 /**
  * Created by xj1 on 08/08/2017.
@@ -163,7 +164,7 @@ public class AddTripActivity extends AddActivity //implements View.OnTouchListen
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/trips/" + tripKey, postValues);
-        childUpdates.put("/user-trips/" + userId + "/" + tripKey, postValues);
+        childUpdates.put(Constants.USER_TRIPS + userId + "/" + tripKey, postValues);
         database_.updateChildren(childUpdates);
 
         writeDays4Trip(userId, tripKey, tripInfo);

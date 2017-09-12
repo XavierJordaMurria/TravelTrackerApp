@@ -128,12 +128,13 @@ public class AddExpensesActivity extends AddActivity //implements View.OnTouchLi
         // Create new trip at /user-trips/$userid/$tripid and at
         // /trips/$tripid simultaneously
         String expensesKey = database_.child("expenses").push().getKey();
-        Expenses expenses = new Expenses(userId, dayKey, name, amount);
+        Expenses expenses = new Expenses(userId, name, amount);
         Map<String, Object> postValues = expenses.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/expenses/" + expensesKey, postValues);
-        childUpdates.put("/" + Constants.DAY_EXPENSES + "/" + expensesKey, postValues);
+        childUpdates.put("/" + Constants.EXPENSES + "/" + expensesKey, postValues);
+        childUpdates.put("/" + Constants.DAY_EXPENSES + "/" + dayKey_ + "/" + expensesKey, postValues);
+
         database_.updateChildren(childUpdates);
     }
     // [END write_fan_out]

@@ -13,4 +13,6 @@ public class Constants {
     public static String MARKERS_TAB = "customMakers";
     public static String DAY_MARKERS_TAB = "day-customMakers";
     public static String DAY_EXPENSES = "day-expenses";
+    public static String EXPENSES = "expenses";
+    public static String USER_TRIPS = "/user-trips/";
 }

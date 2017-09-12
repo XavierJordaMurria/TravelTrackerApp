@@ -5,7 +5,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,9 +22,10 @@ import com.google.firebase.database.Query;
 
 import cat.jorda.traveltrack.model.DayInfo;
 import cat.jorda.traveltrack.util.Constants;
+import cat.jorda.traveltrack.viewHolders.DayViewHolder;
 
-public class DayListFragment extends Fragment {
-
+public class DayListFragment extends Fragment
+{
     private static final String TAG = DayListFragment.class.getSimpleName();
 
     // [START define_database_reference]
@@ -37,6 +37,7 @@ public class DayListFragment extends Fragment {
     private RecyclerView recycler_;
     private LinearLayoutManager manager_;
     private String tripKey_;
+    private Boolean isTablet_;
 
     // Define the events that the fragment will use to communicate
     public interface ItemSelectedListener
@@ -48,20 +49,25 @@ public class DayListFragment extends Fragment {
     public DayListFragment() {}
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         Log.d(TAG, "onCreate");
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Trips list");
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        tripKey_ = getArguments().getString(Constants.TRIP_KEY, "");
+        isTablet_ = getArguments().getBoolean(Constants.IS_TABLET, false);
+
+        if (!isTablet_)
+        {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Trips list");
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
 
         // Get back arguments
         if (getArguments() == null)
             return;
-
-        tripKey_ = getArguments().getString(Constants.TRIP_KEY, "");
     }
 
     @Override
@@ -75,6 +81,7 @@ public class DayListFragment extends Fragment {
             throw new ClassCastException(context.toString()
                     + " must implement StepsFragment.OnItemSelectedListener");
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                               Bundle savedInstanceState) {
@@ -103,8 +110,8 @@ public class DayListFragment extends Fragment {
 
         // Set up Layout Manager, reverse layout
         manager_ = new GridLayoutManager(getActivity(), getCardsNumberOnScreen());
-//        manager_.setReverseLayout(true);
-//        manager_.setStackFromEnd(true);
+        manager_.setReverseLayout(true);
+        manager_.setStackFromEnd(true);
         recycler_.setLayoutManager(manager_);
 
         getDayDataFromDB();
@@ -132,7 +139,7 @@ public class DayListFragment extends Fragment {
 
     private void getDayDataFromDB()
     {
-        if (tripKey_.isEmpty())
+        if (tripKey_ == null || tripKey_.isEmpty())
             return;
 
         // Set up FirebaseRecyclerAdapter with the Query
@@ -147,20 +154,10 @@ public class DayListFragment extends Fragment {
 
                 // Set click listener for the whole post view
                 final String dayKey = dayRef.getKey();
-                viewHolder.itemView.setOnClickListener(v -> {
-                    //Load the day details screen
-                    listener_.onDaySelected(dayKey, tripKey_);
-                });
 
                 // Bind Post to ViewHolder, setting OnClickListener for the star button
-                viewHolder.bindToTrip(model, starView -> {
-                    // Need to write to both places the post is stored
-//                    DatabaseReference globalPostRef = database_.child("posts").child(postRef.getKey());
-//                    DatabaseReference userPostRef = database_.child("user-posts").child(model.uid).child(postRef.getKey());
-//
-//                    // Run two transactions
-//                    onStarClicked(globalPostRef);
-//                    onStarClicked(userPostRef);
+                viewHolder.bindToDay(model, starView -> {
+                    listener_.onDaySelected(dayKey, tripKey_);
                 });
             }
         };

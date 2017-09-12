@@ -1,16 +1,18 @@
-package cat.jorda.traveltrack;
+package cat.jorda.traveltrack.viewHolders;
 
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import cat.jorda.traveltrack.R;
 import cat.jorda.traveltrack.model.TripInfo;
 
 /**
  * add_trip.xml view holder for the AddTripActivity
  */
 
-public class AddTripViewHolder {
+public class AddTripViewHolder
+{
 
     public EditText title_;
     public EditText startingDate_;

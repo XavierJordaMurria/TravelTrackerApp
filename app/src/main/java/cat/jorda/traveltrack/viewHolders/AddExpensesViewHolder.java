@@ -1,9 +1,11 @@
 
-package cat.jorda.traveltrack;
+package cat.jorda.traveltrack.viewHolders;
 
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import cat.jorda.traveltrack.R;
 
 /**
  * add_trip.xml view holder for the AddTripActivity

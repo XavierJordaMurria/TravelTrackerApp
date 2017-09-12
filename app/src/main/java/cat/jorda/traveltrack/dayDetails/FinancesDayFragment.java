@@ -1,14 +1,11 @@
 package cat.jorda.traveltrack.dayDetails;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,26 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.Map;
-
-import cat.jorda.traveltrack.AddExpensesActivity;
 import cat.jorda.traveltrack.AddTripActivity;
-import cat.jorda.traveltrack.DayListFragment;
 import cat.jorda.traveltrack.R;
-import cat.jorda.traveltrack.TripListFragment;
-import cat.jorda.traveltrack.TripViewHolder;
-import cat.jorda.traveltrack.model.CustomMarker;
 import cat.jorda.traveltrack.model.Expenses;
-import cat.jorda.traveltrack.model.TripInfo;
 import cat.jorda.traveltrack.util.Constants;
+import cat.jorda.traveltrack.viewHolders.ExpensesViewHolder;
 
 /**
  * Created by xj1 on 22/08/2017.
@@ -62,18 +47,6 @@ public class FinancesDayFragment extends DayFragments
         super.onCreate(savedInstanceState);
 
         Log.d(TAG, "onCreate");
-    }
-
-    @Override
-    public void onAttach(Context context)
-    {
-        super.onAttach(context);
-
-//        if(context instanceof DayListFragment.ItemSelectedListener)  // context instanceof YourActivity
-//            this.listener_ = (DayListFragment.ItemSelectedListener) context; // = (YourActivity) context
-//        else
-//            throw new ClassCastException(context.toString()
-//                    + " must implement StepsFragment.OnItemSelectedListener");
     }
 
     @Override
@@ -159,10 +132,8 @@ public class FinancesDayFragment extends DayFragments
 
     private void onFabClick(View view)
     {
-        Intent intent = new Intent(getActivity(), AddExpensesActivity.class);
-        intent.putExtra(Constants.DAY_KEY, dayKey_);
-        startActivity(intent);
-
+        Log.d(TAG, "onFabClick");
+        startActivity(new Intent(getActivity(), AddTripActivity.class));
         Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
     }

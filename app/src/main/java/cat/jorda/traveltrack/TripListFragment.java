@@ -3,6 +3,8 @@ package cat.jorda.traveltrack;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,15 +15,12 @@ import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.Transaction;
 
 import cat.jorda.traveltrack.model.TripInfo;
+import cat.jorda.traveltrack.viewHolders.TripViewHolder;
 
 public class TripListFragment extends Fragment
 {
@@ -37,6 +36,8 @@ public class TripListFragment extends Fragment
     private RecyclerView recycler_;
     private LinearLayoutManager manager_;
 
+    private FloatingActionButton fab_;
+
     // Define the events that the fragment will use to communicate
     public interface ItemSelectedListener
     {
@@ -44,11 +45,13 @@ public class TripListFragment extends Fragment
         void onTripSelected(String tripSelectedKey);
     }
 
-    public TripListFragment() {}
+    public TripListFragment()
+    {
+    }
 
     @Override
-    public View onCreateView (LayoutInflater inflater, ViewGroup container,
-                              Bundle savedInstanceState)
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState)
     {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.list_view, container, false);
@@ -59,6 +62,10 @@ public class TripListFragment extends Fragment
 
         recycler_ = (RecyclerView) rootView.findViewById(R.id.items_list);
         recycler_.setHasFixedSize(true);
+
+        fab_ = (FloatingActionButton) rootView.findViewById(R.id.list_view_fab);
+        fab_.setOnClickListener(view -> onFabClick(view));
+        fab_.setVisibility(View.VISIBLE);
 
         return rootView;
     }
@@ -79,25 +86,17 @@ public class TripListFragment extends Fragment
         adapter_ = new FirebaseRecyclerAdapter<TripInfo, TripViewHolder>(TripInfo.class, R.layout.trip_item,
                 TripViewHolder.class, postsQuery) {
             @Override
-            protected void populateViewHolder(final TripViewHolder viewHolder, final TripInfo model, final int position) {
+            protected void populateViewHolder(final TripViewHolder viewHolder, final TripInfo model, final int position)
+            {
                 final DatabaseReference tripRef = getRef(position);
 
                 // Set click listener for the whole post view
                 final String tripKey = tripRef.getKey();
-                viewHolder.itemView.setOnClickListener(v -> {
-                    // Load Days for the trip.
-                    listener_.onTripSelected(tripKey);
-                });
 
                 // Bind Post to ViewHolder, setting OnClickListener for the star button
                 viewHolder.bindToTrip(model, starView -> {
                     // Need to write to both places the post is stored
-//                    DatabaseReference globalPostRef = database_.child("posts").child(postRef.getKey());
-//                    DatabaseReference userPostRef = database_.child("user-posts").child(model.uid).child(postRef.getKey());
-//
-//                    // Run two transactions
-//                    onStarClicked(globalPostRef);
-//                    onStarClicked(userPostRef);
+                    listener_.onTripSelected(tripKey);
                 });
             }
         };
@@ -109,7 +108,7 @@ public class TripListFragment extends Fragment
     {
         super.onAttach(context);
 
-        if(context instanceof ItemSelectedListener)  // context instanceof YourActivity
+        if (context instanceof ItemSelectedListener)  // context instanceof YourActivity
             this.listener_ = (ItemSelectedListener) context; // = (YourActivity) context
         else
             throw new ClassCastException(context.toString()
@@ -117,14 +116,16 @@ public class TripListFragment extends Fragment
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroy()
+    {
         super.onDestroy();
-        if (adapter_ != null) {
+
+        if (adapter_ != null)
             adapter_.cleanup();
-        }
     }
 
-    public String getUid() {
+    public String getUid()
+    {
         return FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
@@ -133,5 +134,13 @@ public class TripListFragment extends Fragment
         // All my posts
         return databaseReference.child("user-trips")
                 .child(getUid());
+    }
+
+    private void onFabClick(View view)
+    {
+        Log.d(TAG, "onFabClick");
+        startActivity(new Intent(getActivity(), AddTripActivity.class));
+        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
     }
 }

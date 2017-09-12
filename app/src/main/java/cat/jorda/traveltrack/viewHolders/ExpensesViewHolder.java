@@ -1,4 +1,4 @@
-package cat.jorda.traveltrack.dayDetails;
+package cat.jorda.traveltrack.viewHolders;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -37,7 +37,6 @@ public class ExpensesViewHolder extends RecyclerView.ViewHolder
         String amountS = String.format(Locale.US, "%.2f", (float)expenses.amount_);
         String expenses_amount = res.getString(R.string.expenses_amount, amountS);
         amountTextView_.setText(expenses_amount);
-//        starView.setOnClickListener(starClickListener);
     }
 }
 

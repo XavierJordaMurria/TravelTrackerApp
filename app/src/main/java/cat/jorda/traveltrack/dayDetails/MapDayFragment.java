@@ -57,8 +57,6 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
 
     private GoogleMap map_;
     private IMapDayFragment delegate_;
-
-    private String tripKey_;
     private String dayKey_;
 
     public interface IMapDayFragment
@@ -72,8 +70,6 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
         super.onCreate(savedInstanceState);
 
         Log.d(TAG, "onCreate");
-
-        tripKey_ = getArguments().getString(Constants.TRIP_KEY);
         dayKey_ = getArguments().getString(Constants.DAY_KEY);
     }
 
@@ -194,13 +190,16 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
         Location location = getCurrentLocation();
         //if location found display as a toast the current latitude and longitude
         if (location != null)
+        {
             Log.d(TAG, "Current location is, lat: " + location.getLatitude() + " long: " + location.getLongitude());
+            // Updates the location and zoom of the MapView
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10);
+            map.animateCamera(cameraUpdate);
+        }
         else
             Log.w(TAG, "Couldn't get current location this time.");
 
-       // Updates the location and zoom of the MapView
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10);
-        map.animateCamera(cameraUpdate);
+
     }
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,

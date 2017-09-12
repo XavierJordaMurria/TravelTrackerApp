@@ -18,6 +18,7 @@ import java.util.Map;
 import cat.jorda.traveltrack.model.Expenses;
 import cat.jorda.traveltrack.model.User;
 import cat.jorda.traveltrack.util.Constants;
+import cat.jorda.traveltrack.viewHolders.AddExpensesViewHolder;
 
 /**
  * Created by xj1 on 08/08/2017.

@@ -22,6 +22,7 @@ import cat.jorda.traveltrack.model.DayInfo;
 import cat.jorda.traveltrack.model.TripInfo;
 import cat.jorda.traveltrack.model.User;
 import cat.jorda.traveltrack.util.Constants;
+import cat.jorda.traveltrack.viewHolders.AddTripViewHolder;
 
 /**
  * Created by xj1 on 08/08/2017.

@@ -1,5 +1,6 @@
 package cat.jorda.traveltrack;
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -10,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,8 +26,11 @@ import static cat.jorda.traveltrack.util.Constants.TRIP_KEY;
 
 public class MainActivity extends BaseActivity implements  TripListFragment.ItemSelectedListener, DayListFragment.ItemSelectedListener
 {
+    private final String TAG = MainActivity.class.getSimpleName();
+
     private enum loadFrgType_ {ADD_FRG, REPLACE_FRG};
-    private FloatingActionButton fab_;
+
+    private View fadeBackground;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -33,25 +38,48 @@ public class MainActivity extends BaseActivity implements  TripListFragment.Item
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fab_ = (FloatingActionButton) findViewById(R.id.fab_new_trip);
-        fab_.setOnClickListener(view -> onFabClick(view));
-
         FrameLayout details = (FrameLayout) findViewById(R.id.days_fragment_container);
+        fadeBackground = findViewById(R.id.fadeBackground);
+
+        Bundle args = new Bundle();
 
         if (savedInstanceState == null)
         {
             loadFragment(new TripListFragment(), loadFrgType_.REPLACE_FRG, R.id.trips_fragment_container, null);
 
             if (details != null)
-                loadFragment(new DayListFragment(), loadFrgType_.REPLACE_FRG, R.id.days_fragment_container, null);
+            {
+                args.putBoolean(Constants.IS_TABLET, true);
+                loadFragment(new DayListFragment(), loadFrgType_.REPLACE_FRG, R.id.days_fragment_container, args);
+            }
 
         }
         else if (currentFragment() instanceof TripListFragment &&
                 (details != null))
         {
+            args.putBoolean(Constants.IS_TABLET, true);
             loadFragment(new TripListFragment(), loadFrgType_.REPLACE_FRG, R.id.trips_fragment_container, null);
-            loadFragment(new DayListFragment(), loadFrgType_.REPLACE_FRG, R.id.days_fragment_container, null);
+            loadFragment(new DayListFragment(), loadFrgType_.REPLACE_FRG, R.id.days_fragment_container, args);
         }
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        Log.d(TAG, "onResume");
+
+        fadeBackground.setVisibility(View.GONE);
+    }
+
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        Log.d(TAG, "onPause");
+
+        fadeBackground.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -91,16 +119,17 @@ public class MainActivity extends BaseActivity implements  TripListFragment.Item
     {
         DayListFragment dayListFrag = new DayListFragment();
         Bundle args = new Bundle();
-        args.putString(TRIP_KEY, tripSelectedKey);
+        args.putString(Constants.TRIP_KEY, tripSelectedKey);
 
         FrameLayout daysFrag = (FrameLayout) findViewById(R.id.days_fragment_container);
 
         if (daysFrag == null)
                 loadFragment(dayListFrag, loadFrgType_.REPLACE_FRG, R.id.trips_fragment_container, args);
         else
-                loadFragment(dayListFrag, loadFrgType_.REPLACE_FRG, R.id.days_fragment_container, args);
-
-        fab_.setVisibility(View.GONE);
+        {
+            args.putBoolean(Constants.IS_TABLET, true);
+            loadFragment(dayListFrag, loadFrgType_.REPLACE_FRG, R.id.days_fragment_container, args);
+        }
     }
 
     @Override
@@ -110,13 +139,6 @@ public class MainActivity extends BaseActivity implements  TripListFragment.Item
         intent.putExtra(Constants.TRIP_KEY, tripKey);
         intent.putExtra(Constants.DAY_KEY, daySelectedKey);
         startActivity(intent);
-    }
-
-    private void onFabClick(View view)
-    {
-        startActivity(new Intent(this, AddTripActivity.class));
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
     }
 
     private Fragment currentFragment()

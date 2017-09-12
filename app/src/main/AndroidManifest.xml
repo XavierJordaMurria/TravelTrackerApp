@@ -44,7 +44,13 @@
 
         <activity
             android:name=".AddExpensesActivity"
-            android:label="New Trip"
+            android:label="New Expenses"
+            android:theme="@style/Theme.Transparent">
+        </activity>
+
+        <activity
+            android:name=".AddNoteActivity"
+            android:label="New Note"
             android:theme="@style/Theme.Transparent">
         </activity>
 

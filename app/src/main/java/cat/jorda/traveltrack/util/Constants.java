@@ -16,4 +16,7 @@ public class Constants {
     public static String DAY_EXPENSES = "day-expenses";
     public static String EXPENSES = "expenses";
     public static String USER_TRIPS = "/user-trips/";
+
+    public static String NOTES = "notes";
+    public static String DAY_NOTES = "/day-notes/";
 }

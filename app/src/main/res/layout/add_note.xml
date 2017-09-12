@@ -1,0 +1,45 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/base_popup_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+    android:background="#80B6B6B6"
+    android:layout_marginBottom="110dp">
+
+    <LinearLayout
+        android:id="@+id/linearLayou1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <EditText
+            android:id="@+id/add_note"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:fontFamily="casual"
+            android:inputType="textPersonName"
+            android:text="@string/expenses_name"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/save_note_btn"
+        style="?android:attr/buttonBarStyle"
+        android:background="#80B6B6B6"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayou1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:elevation="2dp"
+        android:fontFamily="casual"
+        android:gravity="center"
+        android:text="@string/save"
+        android:textColor="@color/colorPrimary" />
+
+</RelativeLayout>

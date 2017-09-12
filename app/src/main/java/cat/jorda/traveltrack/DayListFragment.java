@@ -110,8 +110,8 @@ public class DayListFragment extends Fragment
 
         // Set up Layout Manager, reverse layout
         manager_ = new GridLayoutManager(getActivity(), getCardsNumberOnScreen());
-        manager_.setReverseLayout(true);
-        manager_.setStackFromEnd(true);
+//        manager_.setReverseLayout(true);
+//        manager_.setStackFromEnd(true);
         recycler_.setLayoutManager(manager_);
 
         getDayDataFromDB();

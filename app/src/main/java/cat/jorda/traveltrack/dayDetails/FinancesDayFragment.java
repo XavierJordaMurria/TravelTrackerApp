@@ -17,7 +17,8 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import cat.jorda.traveltrack.AddTripActivity;
+
+import cat.jorda.traveltrack.AddExpensesActivity;
 import cat.jorda.traveltrack.R;
 import cat.jorda.traveltrack.model.Expenses;
 import cat.jorda.traveltrack.util.Constants;
@@ -30,10 +31,6 @@ import cat.jorda.traveltrack.viewHolders.ExpensesViewHolder;
 public class FinancesDayFragment extends DayFragments
 {
     private static String TAG = FinancesDayFragment.class.getSimpleName();
-
-    // [START define_database_reference]
-    private DatabaseReference database_;
-    // [END define_database_reference]
 
     private FirebaseRecyclerAdapter<Expenses, ExpensesViewHolder> adapter_;
     private RecyclerView recycler_;
@@ -56,15 +53,12 @@ public class FinancesDayFragment extends DayFragments
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.list_view, container, false);
 
-        // [START create_database_reference]
-        database_ = FirebaseDatabase.getInstance().getReference();
-        // [END create_database_reference]
-
         recycler_ = (RecyclerView) rootView.findViewById(R.id.items_list);
         recycler_.setHasFixedSize(true);
 
         fab_ = (FloatingActionButton) rootView.findViewById(R.id.list_view_fab);
         fab_.setOnClickListener(view -> onFabClick(view));
+        fab_.setVisibility(View.VISIBLE);
 
         return rootView;
     }
@@ -133,7 +127,7 @@ public class FinancesDayFragment extends DayFragments
     private void onFabClick(View view)
     {
         Log.d(TAG, "onFabClick");
-        startActivity(new Intent(getActivity(), AddTripActivity.class));
+        startActivity(new Intent(getActivity(), AddExpensesActivity.class));
         Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
     }

@@ -17,20 +17,17 @@ public class Note
 {
     @PropertyName("userID")
     public String userID_;
-    @PropertyName("name")
-    public String name_;
-    @PropertyName("amount")
-    public float amount_;
+    @PropertyName("note_item")
+    public String note_;
 
     public Note() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Note(String uid, String name, float amount)
+    public Note(String uid, String note)
     {
         userID_ = uid;
-        name_   = name;
-        amount_ = amount;
+        note_   = note;
     }
 
     // [START post_to_map]
@@ -39,8 +36,7 @@ public class Note
     {
         HashMap<String, Object> result = new HashMap<>();
         result.put("userID", userID_);
-        result.put("name", name_);
-        result.put("amount", amount_);
+        result.put("note_item", note_);
         return result;
     }
     // [END post_to_map]

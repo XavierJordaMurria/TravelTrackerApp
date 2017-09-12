@@ -48,7 +48,7 @@ import cat.jorda.traveltrack.util.Constants;
  * Created by xj1 on 22/08/2017.
  */
 
-public class MapDayFragment extends Fragment implements OnMapReadyCallback, LocationListener
+public class MapDayFragment extends DayFragments implements OnMapReadyCallback, LocationListener
 {
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 00001;
     private static String TAG = MapDayFragment.class.getSimpleName();
@@ -57,7 +57,6 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
 
     private GoogleMap map_;
     private IMapDayFragment delegate_;
-    private String dayKey_;
 
     public interface IMapDayFragment
     {
@@ -70,7 +69,6 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
         super.onCreate(savedInstanceState);
 
         Log.d(TAG, "onCreate");
-        dayKey_ = getArguments().getString(Constants.DAY_KEY);
     }
 
     @Override
@@ -229,7 +227,7 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
         }
     }
 
-    public Query getQuery(DatabaseReference databaseReference)
+    protected Query getQuery(DatabaseReference databaseReference)
     {
         // All my days
         return databaseReference.child(Constants.DAY_MARKERS_TAB)
@@ -253,21 +251,17 @@ public class MapDayFragment extends Fragment implements OnMapReadyCallback, Loca
 
     @Override
     public void onLocationChanged(Location location) {
-
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-
     }
 
     @Override
     public void onProviderDisabled(String provider) {
-
     }
 }

@@ -42,7 +42,7 @@ public class TripListFragment extends Fragment
     public interface ItemSelectedListener
     {
         // This can be any number of events to be sent to the activity
-        void onTripSelected(String tripSelectedKey);
+        void onTripSelected(String tripSelectedKey, String tripName);
     }
 
     public TripListFragment()
@@ -66,6 +66,7 @@ public class TripListFragment extends Fragment
         fab_ = (FloatingActionButton) rootView.findViewById(R.id.list_view_fab);
         fab_.setOnClickListener(view -> onFabClick(view));
         fab_.setVisibility(View.VISIBLE);
+        fab_.setContentDescription(getString(R.string.tripFABDescription));
 
         return rootView;
     }
@@ -92,11 +93,12 @@ public class TripListFragment extends Fragment
 
                 // Set click listener for the whole post view
                 final String tripKey = tripRef.getKey();
+                final String tripTitle = model.title_;
 
                 // Bind Post to ViewHolder, setting OnClickListener for the star button
                 viewHolder.bindToTrip(model, starView -> {
                     // Need to write to both places the post is stored
-                    listener_.onTripSelected(tripKey);
+                    listener_.onTripSelected(tripKey,tripTitle);
                 });
             }
         };

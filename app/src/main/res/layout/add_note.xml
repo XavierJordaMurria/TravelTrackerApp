@@ -4,26 +4,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp"
-    android:background="#80B6B6B6"
+    android:background="#fffefe"
     android:layout_marginBottom="110dp">
 
     <LinearLayout
         android:id="@+id/linearLayou1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2">
+        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/add_note"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:ems="10"
             android:fontFamily="casual"
-            android:inputType="textPersonName"
             android:text="@string/expenses_name"
             android:textAlignment="center"
+            android:inputType="textMultiLine"
             android:textSize="18sp" />
     </LinearLayout>
 

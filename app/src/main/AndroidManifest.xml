@@ -12,11 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -24,41 +22,42 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme">
-        </activity>
-
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".SignInActivity"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".AddTripActivity"
             android:label="New Trip"
-            android:theme="@style/Theme.Transparent">
-        </activity>
-
+            android:theme="@style/Theme.Transparent" />
         <activity
             android:name=".AddExpensesActivity"
             android:label="New Expenses"
-            android:theme="@style/Theme.Transparent">
-        </activity>
-
+            android:theme="@style/Theme.Transparent" />
         <activity
             android:name=".AddNoteActivity"
             android:label="New Note"
-            android:theme="@style/Theme.Transparent">
-        </activity>
-
+            android:theme="@style/Theme.Transparent" />
         <activity
             android:name=".dayDetails.DayDetailsActivity"
-            android:theme="@style/AppTheme">
-        </activity>
+            android:theme="@style/AppTheme" />
 
+        <receiver android:name=".widget.AddNewPin">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="cat.jorda.traveltrack.WIDGET_DATA" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/add_new_pin_info" />
+        </receiver>
     </application>
 
 </manifest>

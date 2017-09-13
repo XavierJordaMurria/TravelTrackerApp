@@ -59,6 +59,7 @@ public class FinancesDayFragment extends DayFragments
         fab_ = (FloatingActionButton) rootView.findViewById(R.id.list_view_fab);
         fab_.setOnClickListener(view -> onFabClick(view));
         fab_.setVisibility(View.VISIBLE);
+        fab_.setContentDescription(getString(R.string.financesFABDescription));
 
         return rootView;
     }

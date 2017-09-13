@@ -58,6 +58,8 @@ public class NotesDayFragment extends DayFragments
         fab_.setOnClickListener(view -> onFabClick(view));
         fab_.setVisibility(View.VISIBLE);
 
+        fab_.setContentDescription(getString(R.string.notesFABDescription));
+
         return rootView;
     }
 

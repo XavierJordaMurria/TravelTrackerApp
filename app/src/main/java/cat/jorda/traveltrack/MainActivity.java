@@ -115,11 +115,11 @@ public class MainActivity extends BaseActivity implements  TripListFragment.Item
     }
 
     @Override
-    public void onTripSelected(String tripSelectedKey)
+    public void onTripSelected(String tripSelectedKey, String tripName)
     {
         DayListFragment dayListFrag = new DayListFragment();
-        Bundle args = new Bundle();
-        args.putString(Constants.TRIP_KEY, tripSelectedKey);
+
+        Bundle args = setBundleTripInfo(tripSelectedKey, tripName, "", "");
 
         FrameLayout daysFrag = (FrameLayout) findViewById(R.id.days_fragment_container);
 
@@ -133,11 +133,13 @@ public class MainActivity extends BaseActivity implements  TripListFragment.Item
     }
 
     @Override
-    public void onDaySelected(String daySelectedKey, String tripKey)
+    public void onDaySelected(String daySelectedKey, String dayName, String tripKey, String tripName)
     {
+        Bundle args = setBundleTripInfo(tripKey, tripName, daySelectedKey, dayName);
+
         Intent intent = new Intent(this, DayDetailsActivity.class);
-        intent.putExtra(Constants.TRIP_KEY, tripKey);
-        intent.putExtra(Constants.DAY_KEY, daySelectedKey);
+        intent.putExtra(Constants.TRIP_INFO, args);
+
         startActivity(intent);
     }
 

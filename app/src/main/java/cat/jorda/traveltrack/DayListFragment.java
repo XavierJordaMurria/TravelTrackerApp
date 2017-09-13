@@ -37,13 +37,14 @@ public class DayListFragment extends Fragment
     private RecyclerView recycler_;
     private LinearLayoutManager manager_;
     private String tripKey_;
+    private String tripName_;
     private Boolean isTablet_;
 
     // Define the events that the fragment will use to communicate
     public interface ItemSelectedListener
     {
         // This can be any number of events to be sent to the activity
-        void onDaySelected(String daySelectedKey, String tripKey);
+        void onDaySelected(String daySelectedKey, String dayName, String tripKey, String tripName);
     }
 
     public DayListFragment() {}
@@ -56,6 +57,8 @@ public class DayListFragment extends Fragment
         Log.d(TAG, "onCreate");
 
         tripKey_ = getArguments().getString(Constants.TRIP_KEY, "");
+        tripName_ = getArguments().getString(Constants.TRIP_NAME, "");
+
         isTablet_ = getArguments().getBoolean(Constants.IS_TABLET, false);
 
         if (!isTablet_)
@@ -84,7 +87,8 @@ public class DayListFragment extends Fragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                              Bundle savedInstanceState) {
+                              Bundle savedInstanceState)
+    {
         super.onCreateView(inflater, container, savedInstanceState);
 
         Log.d(TAG, "onCreonCreateView");
@@ -145,8 +149,8 @@ public class DayListFragment extends Fragment
         // Set up FirebaseRecyclerAdapter with the Query
         Query postsQuery = getQuery(database_);
         adapter_ = new FirebaseRecyclerAdapter<DayInfo, DayViewHolder>(DayInfo.class, R.layout.day_item,
-                DayViewHolder.class, postsQuery) {
-
+                DayViewHolder.class, postsQuery)
+        {
             @Override
             protected void populateViewHolder(final DayViewHolder viewHolder, final DayInfo model, final int position)
             {
@@ -157,10 +161,11 @@ public class DayListFragment extends Fragment
 
                 // Bind Post to ViewHolder, setting OnClickListener for the star button
                 viewHolder.bindToDay(model, starView -> {
-                    listener_.onDaySelected(dayKey, tripKey_);
+                    listener_.onDaySelected(dayKey, model.title_,tripKey_, tripName_);
                 });
             }
         };
+
         recycler_.setAdapter(adapter_);
     }
 

@@ -4,11 +4,15 @@ package cat.jorda.traveltrack.util;
  * Created by xj1 on 20/08/2017.
  */
 
-public class Constants {
+public class Constants
+{
+
+    public static String TRIP_INFO = "TRIP_INFO";
+    public static String TRIP_NAME = "TRIP_NAME";
     public static String TRIP_KEY = "TRIP_KEY";
     public static String DAY_KEY = "DAY_KEY";
+    public static String DAY_NAME = "DAY_NAME";
     public static String IS_TABLET = "IS_TABLET";
-
 
     /** FIREBASE TABLES(GRUPS) NAMES **/
     public static String MARKERS_TAB = "customMakers";

@@ -31,4 +31,10 @@
     <string name="expenses_name">Expenses name</string>
     <string name="amount">Amount</string>
     <string name="expenses_amount">%1$s£</string>
+    <string name="notesFABDescription">This FAB lets you add a new Note.</string>
+    <string name="financesFABDescription">This FAB lets you add a new Expenses</string>
+    <string name="tripFABDescription">This FAB lets you add a new Trip.</string>
+    <string name="appwidget_text">Trip Title</string>
+    <string name="appwidget_text2">Day Title</string>
+    <string name="add_widget">Add widget</string>
 </resources>

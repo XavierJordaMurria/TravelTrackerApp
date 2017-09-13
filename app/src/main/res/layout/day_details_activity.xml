@@ -19,4 +19,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/tabs" />
+
+    <View
+        android:id="@+id/fadeBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layerType="hardware"
+        android:background="#944b0909"/>
+
 </RelativeLayout>

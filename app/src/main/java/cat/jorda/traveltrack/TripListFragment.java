@@ -33,7 +33,7 @@ public class TripListFragment extends Fragment
     private ItemSelectedListener listener_;
 
     private FirebaseRecyclerAdapter<TripInfo, TripViewHolder> adapter_;
-    private RecyclerView recycler_;
+    public RecyclerView recycler_;
     private LinearLayoutManager manager_;
 
     private FloatingActionButton fab_;
@@ -142,7 +142,5 @@ public class TripListFragment extends Fragment
     {
         Log.d(TAG, "onFabClick");
         startActivity(new Intent(getActivity(), AddTripActivity.class));
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
     }
 }

@@ -31,7 +31,7 @@ public class NotesDayFragment extends DayFragments
     private static String TAG = NotesDayFragment.class.getSimpleName();
 
     private FirebaseRecyclerAdapter<Note, NoteViewHolder> adapter_;
-    private RecyclerView recycler_;
+    public RecyclerView recycler_;
     private LinearLayoutManager manager_;
 
     private FloatingActionButton fab_;
@@ -120,7 +120,5 @@ public class NotesDayFragment extends DayFragments
         intent.putExtra(Constants.DAY_KEY, dayKey_);
 
         startActivity(intent);
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
     }
 }

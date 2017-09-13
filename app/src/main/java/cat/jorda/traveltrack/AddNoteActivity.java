@@ -68,7 +68,7 @@ public class AddNoteActivity extends AddActivity
 
         // Disable button so there are no multi-posts
         viewHolder_.saveExpenses_.setEnabled(false);
-        Toast.makeText(this, "Posting Note...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.postingNote, Toast.LENGTH_SHORT).show();
 
         // [START single_value_read]
         final String userId = getUid();

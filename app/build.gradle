@@ -16,7 +16,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            //**Couldn't manage to make it work with minifyEnabled set to true -_-! **//
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
         }

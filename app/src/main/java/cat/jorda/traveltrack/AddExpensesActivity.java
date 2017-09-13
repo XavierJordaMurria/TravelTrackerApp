@@ -75,7 +75,7 @@ public class AddExpensesActivity extends AddActivity //implements View.OnTouchLi
 
         // Disable button so there are no multi-posts
         viewHolder_.saveExpenses_.setEnabled(false);
-        Toast.makeText(this, "Posting Expenses...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.postingExpenses, Toast.LENGTH_SHORT).show();
 
         // [START single_value_read]
         final String userId = getUid();
@@ -94,7 +94,7 @@ public class AddExpensesActivity extends AddActivity //implements View.OnTouchLi
                             // User is null, error out
                             Log.e(TAG, "User " + userId + " is unexpectedly null");
                             Toast.makeText(AddExpensesActivity.this,
-                                    "Error: could not fetch user.",
+                                    R.string.dbError,
                                     Toast.LENGTH_SHORT).show();
                         }
                         else

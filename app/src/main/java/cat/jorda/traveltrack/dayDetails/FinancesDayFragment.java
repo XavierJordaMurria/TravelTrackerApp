@@ -33,7 +33,7 @@ public class FinancesDayFragment extends DayFragments
     private static String TAG = FinancesDayFragment.class.getSimpleName();
 
     private FirebaseRecyclerAdapter<Expenses, ExpensesViewHolder> adapter_;
-    private RecyclerView recycler_;
+    public RecyclerView recycler_;
     private LinearLayoutManager manager_;
 
     private FloatingActionButton fab_;
@@ -129,7 +129,5 @@ public class FinancesDayFragment extends DayFragments
     {
         Log.d(TAG, "onFabClick");
         startActivity(new Intent(getActivity(), AddExpensesActivity.class));
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
     }
 }

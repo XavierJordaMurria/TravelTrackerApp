@@ -37,4 +37,10 @@
     <string name="appwidget_text">Trip Title</string>
     <string name="appwidget_text2">Day Title</string>
     <string name="add_widget">Add widget</string>
+    <string name="postingNote">Posting Note...</string>
+    <string name="postingTrip">Posting Trip...</string>
+    <string name="postingExpenses">Posting Expenses...</string>
+    <string name="dbError">Error: could not fetch user.</string>
+    <string name="signInFailed">Sign In Failed</string>
+    <string name="signUpFailed">Sign Up Failed</string>
 </resources>

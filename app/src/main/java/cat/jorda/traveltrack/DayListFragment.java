@@ -34,7 +34,7 @@ public class DayListFragment extends Fragment
 
     private ItemSelectedListener listener_;
     private FirebaseRecyclerAdapter<DayInfo, DayViewHolder> adapter_;
-    private RecyclerView recycler_;
+    public RecyclerView recycler_;
     private LinearLayoutManager manager_;
     private String tripKey_;
     private String tripName_;

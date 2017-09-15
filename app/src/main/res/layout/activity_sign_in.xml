@@ -13,9 +13,10 @@
         android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:src="@drawable/plane_world"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:src="@drawable/firebase_lockup_400" />
+        android:contentDescription="@string/image_with_a_plane_around_the_world" />
 
     <LinearLayout
         android:id="@+id/layout_email_password"

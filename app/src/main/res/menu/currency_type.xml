@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/currency_eur"
+            android:title="EUR"
+            app:showAsAction="ifRoom"/>
+
+        <item android:id="@+id/currency_aud"
+            android:title="AUD" />
+
+        <item android:id="@+id/currency_bng"
+            android:title="BGN" />
+
+        <item android:id="@+id/currency_cad"
+            android:title="CAD" />
+
+        <item android:id="@+id/currency_chf"
+            android:title="CHF" />
+
+        <item android:id="@+id/currency_cny"
+            android:title="CNY" />
+
+        <item android:id="@+id/currency_czk"
+            android:title="CZK" />
+
+        <item android:id="@+id/currency_dkk"
+            android:title="DKK" />
+
+        <item android:id="@+id/currency_gbp"
+            android:title="GBP" />
+
+        <item android:id="@+id/currency_hkd"
+            android:title="HKD" />
+
+        <item android:id="@+id/currency_hrk"
+            android:title="HRK" />
+
+        <item android:id="@+id/currency_huf"
+            android:title="HUF" />
+
+        <item android:id="@+id/currency_idr"
+            android:title="IDR" />
+
+        <item android:id="@+id/currency_ils"
+            android:title="ILS" />
+
+        <item android:id="@+id/currency_inr"
+            android:title="INR" />
+
+        <item android:id="@+id/currency_jpy"
+            android:title="JPY" />
+
+        <item android:id="@+id/currency_krw"
+            android:title="KRW" />
+
+        <item android:id="@+id/currency_mxn"
+            android:title="MXN" />
+
+        <item android:id="@+id/currency_myr"
+            android:title="MYR" />
+
+        <item android:id="@+id/currency_nok"
+            android:title="NOK" />
+
+        <item android:id="@+id/currency_nzd"
+            android:title="NZD" />
+
+        <item android:id="@+id/currency_php"
+            android:title="PHP" />
+
+        <item android:id="@+id/currency_pln"
+            android:title="PLN" />
+
+        <item android:id="@+id/currency_ron"
+            android:title="RON" />
+
+        <item android:id="@+id/currency_rub"
+            android:title="RUB" />
+
+        <item android:id="@+id/currency_rsek"
+            android:title="SEK" />
+
+        <item android:id="@+id/currency_sgd"
+            android:title="SGD" />
+
+        <item android:id="@+id/currency_thb"
+            android:title="THB" />
+
+        <item android:id="@+id/currency_try"
+            android:title="TRY" />
+
+        <item android:id="@+id/currency_usd"
+            android:title="USD" />
+
+        <item android:id="@+id/currency_zar"
+            android:title="ZAR" />
+
+    </group>
+</menu>

@@ -105,31 +105,6 @@ public class MapDayFragment extends DayFragments implements OnMapReadyCallback, 
 
         getCurrentLocation();
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-
-        Query postsQuery = getQuery(reference);
-
-        postsQuery.addValueEventListener(new ValueEventListener()
-        {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
-                for (DataSnapshot markerSnapShot: dataSnapshot.getChildren())
-                {
-                    CustomMarker customMarker = markerSnapShot.getValue(CustomMarker.class);
-                    Map<String, Object> message = (Map<String, Object>)markerSnapShot.getValue();
-                    String dayID = (String) markerSnapShot.child("dayID").getValue();
-                    String title = (String) markerSnapShot.child("title").getValue();
-                    Log.d(TAG,"DayID: " + dayID + " title:" + title);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError)
-            {
-            }
-        });
-
         return rootView;
     }
 
@@ -148,6 +123,40 @@ public class MapDayFragment extends DayFragments implements OnMapReadyCallback, 
         }
 
         return permissionRequested;
+    }
+
+    private void getMapMarksFromDB(GoogleMap map)
+    {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+        Query postsQuery = getQuery(reference);
+
+        postsQuery.addValueEventListener(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                for (DataSnapshot markerSnapShot: dataSnapshot.getChildren())
+                {
+                    CustomMarker customMarker = markerSnapShot.getValue(CustomMarker.class);
+
+                    Marker newMarker = map.addMarker(new MarkerOptions()
+                            .position(new LatLng(customMarker.latitude_, customMarker.longitude_))
+                            .title(customMarker.title_)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_markers)));
+
+                    Map<String, Object> message = (Map<String, Object>)markerSnapShot.getValue();
+                    String dayID = (String) markerSnapShot.child("dayID").getValue();
+                    String title = (String) markerSnapShot.child("title").getValue();
+                    Log.d(TAG,"DayID: " + dayID + " title:" + title);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError)
+            {
+            }
+        });
     }
 
     @SuppressWarnings({"MissingPermission"})
@@ -246,6 +255,8 @@ public class MapDayFragment extends DayFragments implements OnMapReadyCallback, 
                 Marker newMarker = map_.addMarker(new MarkerOptions().position(latLng).title("marker title").icon(BitmapDescriptorFactory.fromResource(R.drawable.map_markers)));
                 delegate_.onAddedMarker(newMarker);
             });
+
+            getMapMarksFromDB(map_);
         }
     }
 

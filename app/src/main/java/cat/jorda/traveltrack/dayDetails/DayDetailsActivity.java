@@ -83,7 +83,7 @@ public class  DayDetailsActivity extends BaseActivity implements MapDayFragment.
             dayName_ = intent.getStringExtra(Constants.DAY_NAME);
         }
 
-        getSupportActionBar().setTitle("Days");
+        getSupportActionBar().setTitle(R.string.days);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 

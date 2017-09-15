@@ -63,7 +63,7 @@ public class DayListFragment extends Fragment
 
         if (!isTablet_)
         {
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Trips list");
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.trips_list);
             ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
         }

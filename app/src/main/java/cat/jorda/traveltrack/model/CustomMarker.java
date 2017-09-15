@@ -1,15 +1,11 @@
 package cat.jorda.traveltrack.model;
 
-import android.support.annotation.IntDef;
 
 import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 
-import cat.jorda.traveltrack.util.LatLng;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,8 +40,18 @@ public class CustomMarker
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
+    public Marker getMarker_()
+    {
+        return marker_;
+    }
+
+    public void setMarker_(Marker marker_)
+    {
+        this.marker_ = marker_;
+    }
+
     public CustomMarker(String userID, String tripID, String dayID,
-                   Marker marker, @MarkerType.IMarkerType int type)
+                        Marker marker, @MarkerType.IMarkerType int type)
     {
         userID_ = userID;
         tripID_ = tripID;
@@ -55,6 +61,7 @@ public class CustomMarker
         longitude_  = marker.getPosition().longitude;
         type_   = type;
         marker_   = marker;
+
     }
 
     // [START post_to_map]

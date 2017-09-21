@@ -12,8 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -105,7 +103,7 @@ public class ExchangeActivity extends AppCompatActivity  implements  PopupMenu.O
     private class GetExchagneRates extends AsyncTask<String, Void, String>
     {
         private final String baseCurrency_;
-        public  GetExchagneRates(String baseCurrency)
+        GetExchagneRates(String baseCurrency)
         {
             baseCurrency_   =   baseCurrency;
         }
@@ -126,9 +124,7 @@ public class ExchangeActivity extends AppCompatActivity  implements  PopupMenu.O
                 String line;
 
                 while ((line = reader.readLine()) != null)
-                {
                     result.append(line);
-                }
 
             }
             catch( Exception e)

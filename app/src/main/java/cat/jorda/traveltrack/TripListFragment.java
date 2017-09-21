@@ -43,10 +43,7 @@ public class TripListFragment extends Fragment
     {
         // This can be any number of events to be sent to the activity
         void onTripSelected(String tripSelectedKey, String tripName);
-    }
-
-    public TripListFragment()
-    {
+        void onFabClicked();
     }
 
     @Override
@@ -85,7 +82,8 @@ public class TripListFragment extends Fragment
         // Set up FirebaseRecyclerAdapter with the Query
         Query postsQuery = getQuery(database_);
         adapter_ = new FirebaseRecyclerAdapter<TripInfo, TripViewHolder>(TripInfo.class, R.layout.trip_item,
-                TripViewHolder.class, postsQuery) {
+                TripViewHolder.class, postsQuery)
+        {
             @Override
             protected void populateViewHolder(final TripViewHolder viewHolder, final TripInfo model, final int position)
             {
@@ -140,6 +138,7 @@ public class TripListFragment extends Fragment
 
     private void onFabClick(View view)
     {
+        listener_.onFabClicked();
         Log.d(TAG, "onFabClick");
         startActivity(new Intent(getActivity(), AddTripActivity.class));
     }

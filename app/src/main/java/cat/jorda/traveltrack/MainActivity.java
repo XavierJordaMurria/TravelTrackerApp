@@ -1,19 +1,11 @@
 package cat.jorda.traveltrack;
 
-import android.animation.Animator;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,8 +15,6 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import cat.jorda.traveltrack.dayDetails.DayDetailsActivity;
 import cat.jorda.traveltrack.util.Constants;
-
-import static cat.jorda.traveltrack.util.Constants.TRIP_KEY;
 
 public class MainActivity extends BaseActivity implements  TripListFragment.ItemSelectedListener, DayListFragment.ItemSelectedListener
 {
@@ -70,18 +60,22 @@ public class MainActivity extends BaseActivity implements  TripListFragment.Item
     {
         super.onResume();
         Log.d(TAG, "onResume");
+        SharedPreferences prefs = getSharedPreferences(Constants.SHARED_PREFS_KEY, MODE_PRIVATE);
+
+        String tripSelecteKey = prefs.getString(Constants.TRIP_KEY, null);
+        String tripSelectedName = prefs.getString(Constants.TRIP_NAME, null);
 
         fadeBackground.setVisibility(View.GONE);
-    }
 
+        if (tripSelecteKey != null && !tripSelecteKey.isEmpty())
+            loadDays4Trip(tripSelecteKey, tripSelectedName);
+    }
 
     @Override
     public void onPause()
     {
         super.onPause();
         Log.d(TAG, "onPause");
-
-        fadeBackground.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -123,6 +117,23 @@ public class MainActivity extends BaseActivity implements  TripListFragment.Item
     @Override
     public void onTripSelected(String tripSelectedKey, String tripName)
     {
+        loadDays4Trip(tripSelectedKey, tripName);
+    }
+
+    @Override
+    public void onFabClicked()
+    {
+        fadeBackground.setVisibility(View.VISIBLE);
+    }
+
+    private void loadDays4Trip(String tripSelectedKey, String tripName)
+    {
+        SharedPreferences.Editor editor;
+        editor = getSharedPreferences(Constants.SHARED_PREFS_KEY, MODE_PRIVATE).edit();
+        editor.putString(Constants.TRIP_KEY, tripSelectedKey);
+        editor.putString(Constants.TRIP_NAME, tripName);
+        editor.apply();
+
         DayListFragment dayListFrag = new DayListFragment();
 
         Bundle args = setBundleTripInfo(tripSelectedKey, tripName, "", "");
@@ -130,7 +141,7 @@ public class MainActivity extends BaseActivity implements  TripListFragment.Item
         FrameLayout daysFrag = (FrameLayout) findViewById(R.id.days_fragment_container);
 
         if (daysFrag == null)
-                loadFragment(dayListFrag, loadFrgType_.REPLACE_FRG, R.id.trips_fragment_container, args);
+            loadFragment(dayListFrag, loadFrgType_.REPLACE_FRG, R.id.trips_fragment_container, args);
         else
         {
             args.putBoolean(Constants.IS_TABLET, true);

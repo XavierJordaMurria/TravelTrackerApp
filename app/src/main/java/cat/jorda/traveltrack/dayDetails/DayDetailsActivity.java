@@ -40,7 +40,10 @@ import cat.jorda.traveltrack.widget.AddNewPin;
  * Created by xj1 on 21/08/2017.
  */
 
-public class  DayDetailsActivity extends BaseActivity implements MapDayFragment.IMapDayFragment{
+public class  DayDetailsActivity
+        extends BaseActivity
+        implements MapDayFragment.IMapDayFragment, FinancesDayFragment.IFinancesDayFragment, NotesDayFragment.INotesDayFragment
+{
 
     private static final String TAG = "MainActivity";
 
@@ -51,7 +54,6 @@ public class  DayDetailsActivity extends BaseActivity implements MapDayFragment.
     private String dayKey_;
     private String dayName_;
 
-    private FloatingActionButton fab_;
     // [START declare_database_ref]
     private DatabaseReference database_;
     // [END declare_database_ref]
@@ -84,8 +86,8 @@ public class  DayDetailsActivity extends BaseActivity implements MapDayFragment.
         }
 
         getSupportActionBar().setTitle(R.string.days);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         FragmentPagerAdapter pagerAdapter = setUpFragmentPageAdapter(tripKey_, dayKey_);
 
@@ -119,8 +121,6 @@ public class  DayDetailsActivity extends BaseActivity implements MapDayFragment.
     {
         super.onPause();
         Log.d(TAG, "onPause");
-
-        fadeBackground.setVisibility(View.VISIBLE);
     }
 
     private FragmentPagerAdapter setUpFragmentPageAdapter(String tripkey, String dayKey)
@@ -227,6 +227,12 @@ public class  DayDetailsActivity extends BaseActivity implements MapDayFragment.
             sendIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
             sendBroadcast(sendIntent);
         }
+    }
+
+    @Override
+    public void onFabClicked()
+    {
+        fadeBackground.setVisibility(View.VISIBLE);
     }
 }
 

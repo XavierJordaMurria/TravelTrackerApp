@@ -50,7 +50,8 @@
             android:theme="@style/Theme.Transparent" />
         <activity
             android:name=".dayDetails.DayDetailsActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".MainActivity"/>
 
         <receiver android:name=".widget.AddNewPin">
             <intent-filter>

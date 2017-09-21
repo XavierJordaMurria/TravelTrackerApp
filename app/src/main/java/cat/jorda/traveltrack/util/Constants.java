@@ -14,6 +14,8 @@ public class Constants
     public static String DAY_NAME = "DAY_NAME";
     public static String IS_TABLET = "IS_TABLET";
 
+    public static String SHARED_PREFS_KEY = "com.jorda.traveltrack";
+
     /** FIREBASE TABLES(GRUPS) NAMES **/
     public static String MARKERS_TAB = "customMakers";
     public static String DAY_MARKERS_TAB = "day-customMakers";

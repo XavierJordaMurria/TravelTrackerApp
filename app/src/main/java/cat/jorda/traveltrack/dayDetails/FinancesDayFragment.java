@@ -1,6 +1,7 @@
 package cat.jorda.traveltrack.dayDetails;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -38,12 +40,31 @@ public class FinancesDayFragment extends DayFragments
 
     private FloatingActionButton fab_;
 
+    private IFinancesDayFragment delegate_;
+
+    public interface IFinancesDayFragment
+    {
+        void onFabClicked();
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
 
         Log.d(TAG, "onCreate");
+    }
+
+    @Override
+    public void onAttach(Context context)
+    {
+        super.onAttach(context);
+
+        if(context instanceof FinancesDayFragment.IFinancesDayFragment)  // context instanceof YourActivity
+            this.delegate_ = (FinancesDayFragment.IFinancesDayFragment) context; // = (YourActivity) context
+        else
+            throw new ClassCastException(context.toString()
+                    + " must implement StepsFragment.OnItemSelectedListener");
     }
 
     @Override
@@ -127,6 +148,7 @@ public class FinancesDayFragment extends DayFragments
 
     private void onFabClick(View view)
     {
+        delegate_.onFabClicked();
         Log.d(TAG, "onFabClick");
         startActivity(new Intent(getActivity(), AddExpensesActivity.class));
     }

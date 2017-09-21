@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:fontFamily="casual"
-            android:text="@string/expenses_name"
+            android:text="@string/new_note"
             android:textAlignment="center"
             android:inputType="textMultiLine"
             android:textSize="18sp" />

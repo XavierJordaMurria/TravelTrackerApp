@@ -1,5 +1,6 @@
 package cat.jorda.traveltrack.dayDetails;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -36,6 +37,12 @@ public class NotesDayFragment extends DayFragments
 
     private FloatingActionButton fab_;
 
+    private INotesDayFragment delegate_;
+
+    public interface INotesDayFragment
+    {
+        void onFabClicked();
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -44,6 +51,17 @@ public class NotesDayFragment extends DayFragments
         Log.d(TAG, "onCreate");
     }
 
+    @Override
+    public void onAttach(Context context)
+    {
+        super.onAttach(context);
+
+        if(context instanceof INotesDayFragment)  // context instanceof YourActivity
+            this.delegate_ = (INotesDayFragment) context; // = (YourActivity) context
+        else
+            throw new ClassCastException(context.toString()
+                    + " must implement StepsFragment.OnItemSelectedListener");
+    }
     @Override
     public View onCreateView (LayoutInflater inflater, ViewGroup container,
                               Bundle savedInstanceState)
@@ -115,7 +133,7 @@ public class NotesDayFragment extends DayFragments
     private void onFabClick(View view)
     {
         Log.d(TAG, "onFabClick");
-
+        delegate_.onFabClicked();
         Intent intent = new Intent(getActivity(), AddNoteActivity.class);
         intent.putExtra(Constants.DAY_KEY, dayKey_);
 
